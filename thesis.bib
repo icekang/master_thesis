@@ -44,10 +44,107 @@
 @string{Oakland="IEEE International Symposium on Security and Privacy"}
 @string{PST="IEEE Conference on Privacy, Security, and Trust"}
 
-@inproceedings{dinesh20oakland,
-  author = {Sushant Dinesh and Nathan Burow and Dongyan Xu and Mathias Payer},
-  title = {{RetroWrite: Statically Instrumenting COTS Binaries for Fuzzing and Sanitization}},
+@article{Hinton2006,
+  title = {Reducing the Dimensionality of Data with Neural Networks},
+  volume = {313},
+  ISSN = {1095-9203},
+  url = {http://dx.doi.org/10.1126/science.1127647},
+  DOI = {10.1126/science.1127647},
+  number = {5786},
+  journal = {Science},
+  publisher = {American Association for the Advancement of Science (AAAS)},
+  author = {Hinton,  G. E. and Salakhutdinov,  R. R.},
+  year = {2006},
+  month = jul,
+  pages = {504–507}
+}
+
+@article{Jaiswal2020,
+  title = {A Survey on Contrastive Self-Supervised Learning},
+  volume = {9},
+  ISSN = {2227-7080},
+  url = {http://dx.doi.org/10.3390/technologies9010002},
+  DOI = {10.3390/technologies9010002},
+  number = {1},
+  journal = {Technologies},
+  publisher = {MDPI AG},
+  author = {Jaiswal,  Ashish and Babu,  Ashwin Ramesh and Zadeh,  Mohammad Zaki and Banerjee,  Debapriya and Makedon,  Fillia},
   year = {2020},
-  booktitle = Oakland,
-  keywords = {conference},
+  month = dec,
+  pages = {2}
+}
+
+@inproceedings{Vincent2008,
+  series = {ICML ’08},
+  title = {Extracting and composing robust features with denoising autoencoders},
+  url = {http://dx.doi.org/10.1145/1390156.1390294},
+  DOI = {10.1145/1390156.1390294},
+  booktitle = {Proceedings of the 25th international conference on Machine learning - ICML ’08},
+  publisher = {ACM Press},
+  author = {Vincent,  Pascal and Larochelle,  Hugo and Bengio,  Yoshua and Manzagol,  Pierre-Antoine},
+  year = {2008},
+  collection = {ICML ’08}
+}
+
+@inproceedings{Larsson2017,
+  title = {Colorization as a Proxy Task for Visual Understanding},
+  url = {http://dx.doi.org/10.1109/CVPR.2017.96},
+  DOI = {10.1109/cvpr.2017.96},
+  booktitle = {2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  publisher = {IEEE},
+  author = {Larsson,  Gustav and Maire,  Michael and Shakhnarovich,  Gregory},
+  year = {2017},
+  month = jul 
+}
+
+@inproceedings{Chen2020Simple,
+author = {Chen, Ting and Kornblith, Simon and Norouzi, Mohammad and Hinton, Geoffrey},
+title = {A simple framework for contrastive learning of visual representations},
+year = {2020},
+publisher = {JMLR.org},
+abstract = {This paper presents SimCLR: a simple framework for contrastive learning of visual representations. We simplify recently proposed contrastive self-supervised learning algorithms without requiring specialized architectures or a memory bank. In order to understand what enables the contrastive prediction tasks to learn useful representations, we systematically study the major components of our framework. We show that (1) composition of data augmentations plays a critical role in defining effective predictive tasks, (2) introducing a learnable nonlinear transformation between the representation and the contrastive loss substantially improves the quality of the learned representations, and (3) contrastive learning benefits from larger batch sizes and more training steps compared to supervised learning. By combining these findings, we are able to considerably outperform previous methods for self-supervised and semi-supervised learning on ImageNet. A linear classifier trained on self-supervised representations learned by Sim-CLR achieves 76.5\% top-1 accuracy, which is a 7\% relative improvement over previous state-of-the-art, matching the performance of a supervised ResNet-50. When fine-tuned on only 1\% of the labels, we achieve 85.8\% top-5 accuracy, outperforming AlexNet with 100\texttimes{} fewer labels.},
+booktitle = {Proceedings of the 37th International Conference on Machine Learning},
+articleno = {149},
+numpages = {11},
+series = {ICML'20}
+}
+@inproceedings{Chen2020,
+author = {Chen, Ting and Kornblith, Simon and Swersky, Kevin and Norouzi, Mohammad and Hinton, Geoffrey},
+title = {Big self-supervised models are strong semi-supervised learners},
+year = {2020},
+isbn = {9781713829546},
+publisher = {Curran Associates Inc.},
+address = {Red Hook, NY, USA},
+abstract = {One paradigm for learning from few labeled examples while making best use of a large amount of unlabeled data is unsupervised pretraining followed by supervised fine-tuning. Although this paradigm uses unlabeled data in a task-agnostic way, in contrast to common approaches to semi-supervised learning for computer vision, we show that it is surprisingly effective for semi-supervised learning on ImageNet. A key ingredient of our approach is the use of big (deep and wide) networks during pretraining and fine-tuning. We find that, the fewer the labels, the more this approach (task-agnostic use of unlabeled data) benefits from a bigger network. After fine-tuning, the big network can be further improved and distilled into a much smaller one with little loss in classification accuracy by using the unlabeled examples for a second time, but in a task-specific way. The proposed semi-supervised learning algorithm can be summarized in three steps: unsupervised pretraining of a big ResNet model using SimCLRv2, supervised fine-tuning on a few labeled examples, and distillation with unlabeled examples for refining and transferring the task-specific knowledge. This procedure achieves 73.9\% ImageNet top-1 accuracy with just 1\% of the labels (≤13 labeled images per class) using ResNet-50, a 10 x improvement in label efficiency over the previous state-of-the-art. With 10\% of labels, ResNet-50 trained with our method achieves 77.5\% top-1 accuracy, outperforming standard supervised training with all of the labels.},
+booktitle = {Proceedings of the 34th International Conference on Neural Information Processing Systems},
+articleno = {1865},
+numpages = {13},
+location = {Vancouver, BC, Canada},
+series = {NIPS '20}
+}
+
+@article{Russakovsky2015,
+  title = {ImageNet Large Scale Visual Recognition Challenge},
+  volume = {115},
+  ISSN = {1573-1405},
+  url = {http://dx.doi.org/10.1007/s11263-015-0816-y},
+  DOI = {10.1007/s11263-015-0816-y},
+  number = {3},
+  journal = {International Journal of Computer Vision},
+  publisher = {Springer Science and Business Media LLC},
+  author = {Russakovsky,  Olga and Deng,  Jia and Su,  Hao and Krause,  Jonathan and Satheesh,  Sanjeev and Ma,  Sean and Huang,  Zhiheng and Karpathy,  Andrej and Khosla,  Aditya and Bernstein,  Michael and Berg,  Alexander C. and Fei-Fei,  Li},
+  year = {2015},
+  month = apr,
+  pages = {211–252}
+}
+
+@inproceedings{He2016,
+  title = {Deep Residual Learning for Image Recognition},
+  url = {http://dx.doi.org/10.1109/CVPR.2016.90},
+  DOI = {10.1109/cvpr.2016.90},
+  booktitle = {2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  publisher = {IEEE},
+  author = {He,  Kaiming and Zhang,  Xiangyu and Ren,  Shaoqing and Sun,  Jian},
+  year = {2016},
+  month = jun 
 }
