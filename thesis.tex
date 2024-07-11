@@ -132,7 +132,10 @@ Alternatively, generative tasks have been proposed as pre-text tasks for medical
 Introducing deep clustering\cite{Caron2018} idea to Genesis\cite{Zhou2021}, TransVW adds a classification task to the restorative task of Genesis. First, visual words are mined automatically and grouped into clusters with deep latent features. These visual words (VW) are used to be classified and restored. Visual words improve segmentation and classification task in some datasets compared to Genesis\cite{Haghighi2021}. DiRA\cite{Haghighi2024} further improves TransVW by adding adversarial model to tell apart the restored images and the original image. Additionally, constrastive learning is used as an additional pre-text task. Combining, discriminative, restorative and adversarial training, DiRA outperforms TransVW and train-from-scratch models. Eventhough, TransVW and DiRA have shown to be better than Genesis, their evaluations are not as thorough. TransVW only outperforms Genesis in some datasets, while DiRA only evaluates its performace against TransVW.
 
 % 2D and 3D self-supervised learning (extension to 3D)
+\section{Self-supervised learning alternatives}
+Self-supervised learning has a great potential in medical imaging. If the simple and robust pre-text tasks can be found, it can be used to learn representations from medical images without human annotations. However, such tasks are being explored and much work on the evaulation have to be done. Alternatives are introduced to efficiently train the models with existing small medical datasets.
 
+SuPReM suggests to pre-train models with supervised learning on a large annotated datasets. SuPReM collates 9,262 CT volumes, pre-trains a models to segment subset of organs and fine-tune them on mutually exclusive subset of organs. The experiments show that it requires less data to learn meaning representations than SSL while also provides better transferability\cite{Li2024}.
 % 3D self-supervised learning in medical imaging
 % Genesis, SwinUNTER
 
