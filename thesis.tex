@@ -144,12 +144,7 @@ Rather than pre-training, nnUNet proposes a self-configuring framework for medic
 
 Previous work at IMES to segment OCT images have been done with SegFormer pre-trained with ADE20k. SegFormer is a ViT-based model that enforces multiple resulotion at different depths of the transformer. Simple MLP decoder heads are introduced to combine the features from different depths. The model has been shown to be state-of-the-art on segmentic segmentation at the time~\cite{Xie2021SegFormer}.
 
-Taking a different approach, RADIO proposes to learn representations from already learned models. RADIO is a student model that learns to predict a same feature from multiple teacher models, including DINOv2~\cite{Oquab2024dinov}, SAM~\cite{Kirillov2023SAM} and CLIP~\cite{Radford2021CLIP}. In addition, RADIO is trained to be resolution-agnostic, allowing it to understand images at different resolutions. RADIO has been shown to provide a high resolution feature map that can be used for downstream tasks~\cite{Ranzinger2024RADIO}.
-% 3D self-supervised learning in medical imaging
-% Genesis, SwinUNTER
-
-% supervised segmentation in medical imaging
-% nnUNet, SegFormer?
+Taking a different approach, RADIO proposes to learn representations from already learned models. RADIO is a student model that learns to predict a same feature from multiple teacher models, including DINOv2~\cite{Oquab2024dinov}, SAM~\cite{Kirillov2023SAM} and CLIP~\cite{Radford2021CLIP}. In addition, RADIO is trained to be resolution-agnostic, allowing it to understand images at different resolutions. RADIO has been shown to provide a high resolution feature map that can be used for downstream tasks~\cite{Ranzinger2024RADIO}. While SSLs has a great potential on medical imaging, their approaches should be compared to all other existing ones in order to ensure a comprehensive comparison.
 
 %%%%%%%%%%%%%%%%
 \chapter{Design}
