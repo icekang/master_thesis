@@ -103,6 +103,52 @@ This section is usually 3-5 pages.
 
 % This section is usually 3-5 pages.
 
+%%%%%%%%%%%%%%%%
+\chapter{Design}
+%%%%%%%%%%%%%%%%
+
+Introduce and discuss the design decisions that you made during this project.
+Highlight why individual decisions are important and/or necessary. Discuss
+how the design fits together.
+
+This section is usually 5-10 pages.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Implementation}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+The implementation covers some of the implementation details of your project.
+This is not intended to be a low level description of every line of code that
+you wrote but covers the implementation aspects of the projects.
+
+This section is usually 3-5 pages.
+
+
+%%%%%%%%%%%%%%%%%%%%
+\chapter{Evaluation}
+%%%%%%%%%%%%%%%%%%%%
+
+In the evaluation you convince the reader that your design works as intended.
+Describe the evaluation setup, the designed experiments, and how the
+experiments showcase the individual points you want to prove.
+
+This section is usually 5-10 pages.
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Related Work}
+%%%%%%%%%%%%%%%%%%%%%%
+
+% The related work section covers closely related work. Here you can highlight
+% the related work, how it solved the problem, and why it solved a different
+% problem. Do not play down the importance of related work, all of these
+% systems have been published and evaluated! Say what is different and how
+% you overcome some of the weaknesses of related work by discussing the 
+% trade-offs. Stay positive!
+
+% This section is usually 3-5 pages.
+
 % Self-supervised learning
 \section{Self-supervised learning}
 Self-supervised learning (SSL) has been proven to be a promising approach for natural language processing tasks (NLP). SSL can be split into two parts which are pre-text tasks and downstream tasks. Pre-text tasks are tasks that are designed to learn representations from the data itself without human annotations. Downstream tasks are finetuning tasks that use the learned representations from pre-text tasks to solve the tasks that require human annotations. It allows models to learn representations while avoiding costs of human annotations~\cite{Jaiswal2020}. Unsupervised pre-text tasks is not uncommon in the computer vision (CV) domain. For example, autoencoder~\cite{Hinton2006}, denoising autoencoder~\cite{Vincent2008}, and colorization~\cite{Larsson2017} are some of the pre-text tasks that have been used in CV. However, suitable pre-text tasks for SSL in computer vision are still under research.
@@ -145,53 +191,6 @@ Rather than pre-training, nnUNet proposes a self-configuring framework for medic
 Previous work at IMES to segment OCT images have been done with SegFormer pre-trained with ADE20k. SegFormer is a ViT-based model that enforces multiple resulotion at different depths of the transformer. Simple MLP decoder heads are introduced to combine the features from different depths. The model has been shown to be state-of-the-art on segmentic segmentation at the time~\cite{Xie2021SegFormer}.
 
 Taking a different approach, RADIO proposes to learn representations from already learned models. RADIO is a student model that learns to predict a same feature from multiple teacher models, including DINOv2~\cite{Oquab2024dinov}, SAM~\cite{Kirillov2023SAM} and CLIP~\cite{Radford2021CLIP}. In addition, RADIO is trained to be resolution-agnostic, allowing it to understand images at different resolutions. RADIO has been shown to provide a high resolution feature map that can be used for downstream tasks~\cite{Ranzinger2024RADIO}. While SSLs has a great potential on medical imaging, their approaches should be compared to all other existing ones in order to ensure a comprehensive comparison.
-
-%%%%%%%%%%%%%%%%
-\chapter{Design}
-%%%%%%%%%%%%%%%%
-
-Introduce and discuss the design decisions that you made during this project.
-Highlight why individual decisions are important and/or necessary. Discuss
-how the design fits together.
-
-This section is usually 5-10 pages.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Implementation}
-%%%%%%%%%%%%%%%%%%%%%%%%
-
-The implementation covers some of the implementation details of your project.
-This is not intended to be a low level description of every line of code that
-you wrote but covers the implementation aspects of the projects.
-
-This section is usually 3-5 pages.
-
-
-%%%%%%%%%%%%%%%%%%%%
-\chapter{Evaluation}
-%%%%%%%%%%%%%%%%%%%%
-
-In the evaluation you convince the reader that your design works as intended.
-Describe the evaluation setup, the designed experiments, and how the
-experiments showcase the individual points you want to prove.
-
-This section is usually 5-10 pages.
-
-
-%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Related Work}
-%%%%%%%%%%%%%%%%%%%%%%
-
-The related work section covers closely related work. Here you can highlight
-the related work, how it solved the problem, and why it solved a different
-problem. Do not play down the importance of related work, all of these
-systems have been published and evaluated! Say what is different and how
-you overcome some of the weaknesses of related work by discussing the 
-trade-offs. Stay positive!
-
-This section is usually 3-5 pages.
-
 
 %%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusion}
