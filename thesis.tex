@@ -124,6 +124,36 @@ how the design fits together.
 
 This section is usually 5-10 pages.
 
+\section{Datasets}
+The main goal of this project is to study the effectiveness of self-supervised learning algorithms for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its own characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 3D OCT volumes in total annotated with calcium plaques. Lumen and Wall OCT (Dataset \ref{enum:lumen-and-wall-dataset}) is a dataset of 20 3D volumes annotated with lumen and wall. These two datasets are mutually exclusive. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment. Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes morphological properties of the calcium plaques, lumen and wall. This can be summarized as follows:
+
+\begin{enumerate}
+    \item Annotated datasets:
+    \begin{enumerate}
+        \item \label{enum:calcium-dataset} \textbf{Calcium OCT} is a dataset of coronary OCT images with calcium annotations before IVL.
+        \item \label{enum:lumen-and-wall-dataset} \textbf{Lumen and Wall OCT} is a dataset of coronary OCT images with lumen and wall annotations before IVL.
+    \end{enumerate}
+    \item \label{enum:unannotated-dataset} Unannotated datasets:
+    \begin{enumerate}
+        \item \textbf{Pre-IVL} is a dataset of coronary OCT images before IVL.
+        \item \textbf{Post-IVL} is a dataset of coronary OCT images after IVL.
+        \item \textbf{Post-Stent} is a dataset of coronary OCT images after stent deployment.
+    \end{enumerate}
+\end{enumerate}
+
+Each dataset has its own purpose in this study. Calcium OCT is used for evaluating effectiveness of each algorithm on calcium segmentation. Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
+
+% TODO: add image samples of the datasets (torchio)
+
+\section{Algorithms}
+% TODO: Something like "we select generative tasks for self-supervised learning on our datasets" but more detailed and fomal
+
+\subsection{CNN-based Supervised Learning - nnUNet}
+% Discuss 2D and 3D nnUNet for segmentation
+\subsection{Transformer-based Supervised Learning - SegFormer}
+\subsection{Unimodal Self-Supervised Learning - Genesis}
+\subsection{Unimodal Self-Supervised Learning - V-JEPA}
+\subsection{Multi-modal Self-Supervised Learning - CLIP}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}
