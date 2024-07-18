@@ -599,16 +599,22 @@
   year      = {2016},
   month     = jun
 }
-@misc{Radford2021CLIP,
-  doi       = {10.48550/ARXIV.2103.00020},
-  url       = {https://arxiv.org/abs/2103.00020},
-  author    = {Radford,  Alec and Kim,  Jong Wook and Hallacy,  Chris and Ramesh,  Aditya and Goh,  Gabriel and Agarwal,  Sandhini and Sastry,  Girish and Askell,  Amanda and Mishkin,  Pamela and Clark,  Jack and Krueger,  Gretchen and Sutskever,  Ilya},
-  keywords  = {Computer Vision and Pattern Recognition (cs.CV),  Machine Learning (cs.LG),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
+@inproceedings{Radford2021CLIP,
   title     = {Learning Transferable Visual Models From Natural Language Supervision},
-  publisher = {arXiv},
+  author    = {Radford, Alec and Kim, Jong Wook and Hallacy, Chris and Ramesh, Aditya and Goh, Gabriel and Agarwal, Sandhini and Sastry, Girish and Askell, Amanda and Mishkin, Pamela and Clark, Jack and Krueger, Gretchen and Sutskever, Ilya},
+  booktitle = {Proceedings of the 38th International Conference on Machine Learning},
+  pages     = {8748--8763},
   year      = {2021},
-  copyright = {arXiv.org perpetual,  non-exclusive license}
+  editor    = {Meila, Marina and Zhang, Tong},
+  volume    = {139},
+  series    = {Proceedings of Machine Learning Research},
+  month     = {18--24 Jul},
+  publisher = {PMLR},
+  pdf       = {http://proceedings.mlr.press/v139/radford21a/radford21a.pdf},
+  url       = {https://proceedings.mlr.press/v139/radford21a.html},
+  abstract  = {State-of-the-art computer vision systems are trained to predict a fixed set of predetermined object categories. This restricted form of supervision limits their generality and usability since additional labeled data is needed to specify any other visual concept. Learning directly from raw text about images is a promising alternative which leverages a much broader source of supervision. We demonstrate that the simple pre-training task of predicting which caption goes with which image is an efficient and scalable way to learn SOTA image representations from scratch on a dataset of 400 million (image, text) pairs collected from the internet. After pre-training, natural language is used to reference learned visual concepts (or describe new ones) enabling zero-shot transfer of the model to downstream tasks. We study the performance of this approach by benchmarking on over 30 different existing computer vision datasets, spanning tasks such as OCR, action recognition in videos, geo-localization, and many types of fine-grained object classification. The model transfers non-trivially to most tasks and is often competitive with a fully supervised baseline without the need for any dataset specific training. For instance, we match the accuracy of the original ResNet-50 on ImageNet zero-shot without needing to use any of the 1.28 million training examples it was trained on.}
 }
+
 @inproceedings{Rahimi2021,
   title  = {Addressing the Exorbitant Cost of Labeling Medical Images with Active Learning W},
   author = {Saba Rahimi and Ozan Oktay and Javier Alvarez-Valle and Sujeeth Bharadwaj},
@@ -651,6 +657,21 @@
   pages     = {234--241},
   abstract  = {There is large consent that successful training of deep networks requires many thousand annotated training samples. In this paper, we present a network and training strategy that relies on the strong use of data augmentation to use the available annotated samples more efficiently. The architecture consists of a contracting path to capture context and a symmetric expanding path that enables precise localization. We show that such a network can be trained end-to-end from very few images and outperforms the prior best method (a sliding-window convolutional network) on the ISBI challenge for segmentation of neuronal structures in electron microscopic stacks. Using the same network trained on transmitted light microscopy images (phase contrast and DIC) we won the ISBI cell tracking challenge 2015 in these categories by a large margin. Moreover, the network is fast. Segmentation of a 512x512 image takes less than a second on a recent GPU. The full implementation (based on Caffe) and the trained networks are available at http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net.},
   isbn      = {978-3-319-24574-4}
+}
+
+@article{Rumelhart1986,
+  title     = {Learning representations by back-propagating errors},
+  volume    = {323},
+  issn      = {1476-4687},
+  url       = {http://dx.doi.org/10.1038/323533a0},
+  doi       = {10.1038/323533a0},
+  number    = {6088},
+  journal   = {Nature},
+  publisher = {Springer Science and Business Media LLC},
+  author    = {Rumelhart,  David E. and Hinton,  Geoffrey E. and Williams,  Ronald J.},
+  year      = {1986},
+  month     = oct,
+  pages     = {533–536}
 }
 
 @article{Russakovsky2015,
@@ -763,6 +784,7 @@
   pages     = {1805}
 }
 
+
 @inproceedings{Taleb2020,
   author    = {Taleb, Aiham and Loetzsch, Winfried and Danz, Noel  and Severin, Julius and Gaertner, Thomas and Bergner, Benjamin and Lippert, Christoph},
   booktitle = {Advances in Neural Information Processing Systems},
@@ -785,7 +807,6 @@
   year      = {2022},
   month     = jun
 }
-
 
 @inproceedings{Tong2022VideoMAE,
   title     = {Video{MAE}: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training},
@@ -914,6 +935,7 @@
   pages     = {101840}
 }
 
+
 @inbook{Zhuang2019,
   title     = {Self-supervised Feature Learning for 3D Medical Images by Playing a Rubik’s Cube},
   isbn      = {9783030322519},
@@ -925,4 +947,13 @@
   author    = {Zhuang,  Xinrui and Li,  Yuexiang and Hu,  Yifan and Ma,  Kai and Yang,  Yujiu and Zheng,  Yefeng},
   year      = {2019},
   pages     = {420–428}
+}
+
+@software{Shariatnia2021,
+author = {Shariatnia, M. Moein},
+doi = {10.5281/zenodo.6845731},
+month = {4},
+title = {{Simple CLIP}},
+version = {1.0.0},
+year = {2021}
 }
