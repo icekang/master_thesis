@@ -141,9 +141,34 @@ The main goal of this project is to study the effectiveness of self-supervised l
     \end{enumerate}
 \end{enumerate}
 
-Each dataset has its own purpose in this study. Calcium OCT is used for evaluating effectiveness of each algorithm on calcium segmentation. Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
+Each dataset has its own purpose in this study. Calcium OCT is used for evaluating effectiveness of each algorithm on calcium segmentation. On the other hand, Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
 
-% TODO: add image samples of the datasets (torchio)
+In Calcium OCT, only 1 class is annotated, calcium. The size of each image is \(500\times 500\) while the depth varies from \(375\) to \(539\). An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. In the training volumes, they are split into 3 folds of training and validation sets. In each fold, the model can be train using the training set, while the best model can be selected using the validation set. Subsequently, all models trained on each fold can be evaluated on the testing set that has not been seen during training. Eventually, the performace on the testing set can be averaged to get the final performace. This is done to ensure the robust evaluation of the models.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/fig_datasets_calcium_oct_sample.pdf}
+    \caption{An example of annotated image in Calcium OCT dataset.}
+    \label{fig:calcium-oct}
+\end{figure}
+
+Lumen and Wall OCT has 2 classes, lumen and wall, and is split into 16 training volumes and 4 testing volumes. The size of each image is \(500\times 500\) while the depth varies from \(270\) to \(540\). An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/fig_datasets_law_oct_sample.pdf}
+    \caption{An example of annotated image in Lumen and Wall OCT dataset.}
+    \label{fig:lumen-and-wall-oct}
+\end{figure}
+
+The unannotated datasets are of size \(500\times 500\). They are not splitted into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may split them into train and validation set for hyperparameter tuning. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/fig_datasets_unlabeled_oct_sample.pdf}
+    \caption{Samples of unannotated OCT images.}
+    \label{fig:unannotated-oct}
+\end{figure}
 
 \section{Algorithms}
 % TODO: Something like "we select generative tasks for self-supervised learning on our datasets" but more detailed and fomal
