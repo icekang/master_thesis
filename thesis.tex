@@ -181,8 +181,12 @@ nnUNet is a self-configuring framework for medical image segmentation~\cite{Isen
 % Discuss 2D and 3D nnUNet for segmentation
 nnUNet provides both 2D- and 3D-segmentation architectures as well as a cascade 3D architecture of full resolution and low resolution networks. In our initial experiments, we find that 2D and 3D architecture are performing better than the cascade architecture. This leads us to subsequently only use 2D and 3D architectures for the rest of the experiments.
 
+% TODO: add a photo of nnUNet pipeline
+
 \subsection{Transformer-based Supervised Learning - SegFormer}
 SegFormer is a transformer-based model with multi-resolution feature fusion with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986})~\cite{Xie2021SegFormer}, and has been pre-trained on ADE20k~\cite{Zhou2018} datasets. Following the previous work, we use the pre-trained model to fine-tune on Calcium OCT.
+
+% TODO: add a photo of SegFormer architecture
 
 \subsection{Transformer-based Medical Supervised Learning - SuPReM}~\label{sec:design:suprem}
 SuPReM is a supervised pre-training method for medical image segmentation~\cite{Li2024}. As we do not have a large annotated dataset, we use publicly available pre-trained models of the paper to fine-tune on Calcium OCT. Following their paper, we use their best performing model which is SwinUNTER~\cite{Tang2022} with their training scripts. Because SwinUNTER is also on its own another transformer-based model with self-supervised learning, we conduct three experimentals to evaluate the algorithms. The first setting directly utilizes the pre-trained model on SuPReM large datasets, and fine-tunes on Calcium OCT. The second setting uses self-supervised SwinUNTER model, and fine-tunes on Calcium OCT. The last setting uses SwinUNTER model without any pre-training, and fine-tunes on Calcium OCT. Consequently, we can evaluate the effectiveness of SuPReM pre-training and self-supervised learning proposed in SwinUNTER on Calcium OCT.
@@ -190,11 +194,16 @@ SuPReM is a supervised pre-training method for medical image segmentation~\cite{
 \subsection{Unimodal Self-Supervised Learning - Genesis}
 Genesis is a self-supervised learning method that learns representations by restoring the original images from their corrupted versions~\cite{Zhou2021}. In their paper, Genesis is applied on a small U-Net architecture, containing 15M parameters. We adapt their method to the same 3D nnUNet architecture in Section~\ref{sec:design:nnunet}. Thereafter, we apply Genesis pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT.
 
+% TODO: add a photo of Genesis framework
+
 \subsection{Unimodal Self-Supervised Learning - V-JEPA}
 V-JEPA is a self-supervised learning method that acquires representations by predicting the encoded vectors of the masked segments of a video~\cite{Bardes2024Vjepa}. We desgin two experiments to study the effectiveness of V-JEPA on OCT images. Firstly, we directly fine-tunes the pre-trained V-JEPA model on Calcium OCT. This means that the model is a simple ViT~\cite{Dosovitskiy2020vit} and is trained on natural videos and then fine-tuned on medical images . Secondly, we apply V-JEPA pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT. Since the original paper does not evaluate the model on segmentation tasks, we will discuss the implementation of the decoder head in Section~\ref{sec:implementation:vjepa}.
 
+% TODO: add a photo of V-JEPA framework
+
 \subsection{Multi-modal Self-Supervised Learning - CLIP}
 Contrastive\cite{Radford2021CLIP} Language-Image Pre-trainig (CLIP~\cite{Radford2021CLIP}) is a self-supervised learning method that learns representations by matching encoded vectors of images and their text captions. We adapt CLIP to OCT images by using co-registered Pre-IVL, Post-IVL, and Post-Stent images. We use the same nnUNet architecture as in Section~\ref{sec:design:nnunet} to pre-traine CLIP on and fine-tune the final model on Calcium OCT. Note that the original paper does not publish the code for CLIP, we modify the code from a publicly available project~\cite{Shariatnia2021}. Original paper proposes a pre-training framework on language and image. However, we apply the framework on multi-modalities of OCT images. We will discuss the adaptation of the framework to our specific use case in Section~\ref{sec:implementation:clip}.
+% TODO: add a photo of CLIP framework
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}
@@ -226,6 +235,7 @@ Because of V-JEPA's lack of evaluation on segmentation tasks, it is necessary to
 Originally, the algorithm is designed for language-image pairs. However, we adapt the algorithm to multi-modalities of OCT images. To achieve this, we swap the text tokenizer of the original CLIP with an image encoder. From our experiments, we find that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. Our experiments do sanity check on different configurations by letting all pairs of image be the same image and see whether configurations can learn to match the same image. Since this is an easy case it should be able to encode the same image to the same vector. We test this on separate encoders and projectors, separate encoders and shared projectors, and shared encoders and projectors. We find that only separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image. Consequently, we test these two configurations on the main task of matching different images. We find only shared encoders and projectors can converge the losses down. This configuration is reasonable as the image encoder and its projector is forced to learn a representation that can be used for both modalities.
 
 % TODO: of final implementation of CLIP on OCT images (shared encoder and projector)
+
 %%%%%%%%%%%%%%%%%%%%
 \chapter{Evaluation}
 %%%%%%%%%%%%%%%%%%%%
