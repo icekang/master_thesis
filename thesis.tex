@@ -12,6 +12,8 @@
 % Options: MScThesis, BScThesis, MScProject, BScProject
 \usepackage[MScThesis,lablogo]{EPFLreport}
 \usepackage{xspace}
+\usepackage{amsmath}
+
 
 \title{Self-supervised learning\\for calcium segmentation on coronary OCT images}
 \author{Naravich Chutisilp}
@@ -124,7 +126,7 @@ In recent years, generative tasks are now gaining attention in medical imaging f
 
 % This section is usually 5-10 pages.
 
-\section{Datasets}
+\section{Datasets}\label{sec:design:datasets}
 The main goal of this project is to study the effectiveness of self-supervised learning algorithms for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its own characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 3D OCT volumes in total annotated with calcium plaques. Lumen and Wall OCT (Dataset \ref{enum:lumen-and-wall-dataset}) is a dataset of 20 3D volumes annotated with lumen and wall. These two datasets are mutually exclusive. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment. Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes morphological properties of the calcium plaques, lumen and wall. This can be summarized as follows:
 
 \begin{enumerate}
@@ -143,7 +145,7 @@ The main goal of this project is to study the effectiveness of self-supervised l
 
 Each dataset has its own purpose in this study. Calcium OCT is used for evaluating effectiveness of each algorithm on calcium segmentation. On the other hand, Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
 
-In Calcium OCT, only 1 class is annotated, calcium. The size of each image is \(500\times 500\) while the depth varies from \(375\) to \(539\). An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. In the training volumes, they are split into 3 folds of training and validation sets. In each fold, the model can be train using the training set, while the best model can be selected using the validation set. Subsequently, all models trained on each fold can be evaluated on the testing set that has not been seen during training. Eventually, the performace on the testing set can be averaged to get the final performace. This is done to ensure the robust evaluation of the models.
+In Calcium OCT, only 1 class is annotated, calcium. The size of each image is $500\times 500$ while the depth varies from $375$ to $539$. An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. In the training volumes, they are split into 3 folds of training and validation sets. In each fold, the model can be train using the training set, while the best model can be selected using the validation set. Subsequently, all models trained on each fold can be evaluated on the testing set that has not been seen during training. Eventually, the performace on the testing set can be averaged to get the final performace. This is done to ensure the robust evaluation of the models.
 
 \begin{figure}[ht]
     \centering
@@ -152,7 +154,7 @@ In Calcium OCT, only 1 class is annotated, calcium. The size of each image is \(
     \label{fig:calcium-oct}
 \end{figure}
 
-Lumen and Wall OCT has 2 classes, lumen and wall, and is split into 16 training volumes and 4 testing volumes. The size of each image is \(500\times 500\) while the depth varies from \(270\) to \(540\). An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
+Lumen and Wall OCT has 2 classes, lumen and wall, and is split into 16 training volumes and 4 testing volumes. The size of each image is $500\times 500$ while the depth varies from $270$ to $540$. An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
 
 \begin{figure}[ht]
     \centering
@@ -161,7 +163,7 @@ Lumen and Wall OCT has 2 classes, lumen and wall, and is split into 16 training 
     \label{fig:lumen-and-wall-oct}
 \end{figure}
 
-The unannotated datasets are of size \(500\times 500\). They are not splitted into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may split them into train and validation set for hyperparameter tuning. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
+The unannotated datasets are of size $500\times 500$. They are not splitted into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may split them into train and validation set for hyperparameter tuning. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
 
 \begin{figure}[ht]
     \centering
@@ -182,17 +184,17 @@ nnUNet provides both 2D- and 3D-segmentation architectures as well as a cascade 
 \subsection{Transformer-based Supervised Learning - SegFormer}
 SegFormer is a transformer-based model with multi-resolution feature fusion with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986})~\cite{Xie2021SegFormer}, and has been pre-trained on ADE20k~\cite{Zhou2018} datasets. Following the previous work, we use the pre-trained model to fine-tune on Calcium OCT.
 
-\subsection{Transformer-based Medical Supervised Learning - SuPReM}
+\subsection{Transformer-based Medical Supervised Learning - SuPReM}~\label{sec:design:suprem}
 SuPReM is a supervised pre-training method for medical image segmentation~\cite{Li2024}. As we do not have a large annotated dataset, we use publicly available pre-trained models of the paper to fine-tune on Calcium OCT. Following their paper, we use their best performing model which is SwinUNTER~\cite{Tang2022} with their training scripts. Because SwinUNTER is also on its own another transformer-based model with self-supervised learning, we conduct three experimentals to evaluate the algorithms. The first setting directly utilizes the pre-trained model on SuPReM large datasets, and fine-tunes on Calcium OCT. The second setting uses self-supervised SwinUNTER model, and fine-tunes on Calcium OCT. The last setting uses SwinUNTER model without any pre-training, and fine-tunes on Calcium OCT. Consequently, we can evaluate the effectiveness of SuPReM pre-training and self-supervised learning proposed in SwinUNTER on Calcium OCT.
 
 \subsection{Unimodal Self-Supervised Learning - Genesis}
 Genesis is a self-supervised learning method that learns representations by restoring the original images from their corrupted versions~\cite{Zhou2021}. In their paper, Genesis is applied on a small U-Net architecture, containing 15M parameters. We adapt their method to the same 3D nnUNet architecture in Section~\ref{sec:design:nnunet}. Thereafter, we apply Genesis pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT.
 
 \subsection{Unimodal Self-Supervised Learning - V-JEPA}
-V-JEPA is a self-supervised learning method that acquires representations by predicting the encoded vectors of the masked segments of a video~\cite{Bardes2024Vjepa}. We desgin two experiments to study the effectiveness of V-JEPA on OCT images. Firstly, we directly fine-tunes the pre-trained V-JEPA model on Calcium OCT. This means that the model is trained on natural videos and then fine-tuned on medical images. Secondly, we apply V-JEPA pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT. Since the original paper does not evaluate the model on segmentation tasks, we will discuss the implementation of the decoder head in Section~\ref{sec:implementation:vjepa}.
+V-JEPA is a self-supervised learning method that acquires representations by predicting the encoded vectors of the masked segments of a video~\cite{Bardes2024Vjepa}. We desgin two experiments to study the effectiveness of V-JEPA on OCT images. Firstly, we directly fine-tunes the pre-trained V-JEPA model on Calcium OCT. This means that the model is a simple ViT~\cite{Dosovitskiy2020vit} and is trained on natural videos and then fine-tuned on medical images . Secondly, we apply V-JEPA pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT. Since the original paper does not evaluate the model on segmentation tasks, we will discuss the implementation of the decoder head in Section~\ref{sec:implementation:vjepa}.
 
 \subsection{Multi-modal Self-Supervised Learning - CLIP}
-Contrastive Language-Image Pre-trainig (CLIP~\cite{Radford2021CLIP}) is a self-supervised learning method that learns representations by matching encoded vectors of images and their text captions. We adapt CLIP to OCT images by using co-registered Pre-IVL, Post-IVL, and Post-Stent images. We use the same nnUNet architecture as in Section~\ref{sec:design:nnunet} to pre-traine CLIP on and fine-tune the final model on Calcium OCT. Note that the original paper does not publish the code for CLIP, we modify the code from a publicly available project~\cite{Shariatnia2021}. Original paper proposes a pre-training framework on language and image. However, we apply the framework on multi-modalities of OCT images. We will discuss the adaptation of the framework to our specific use case in Section~\ref{sec:implementation:clip}.
+Contrastive\cite{Radford2021CLIP} Language-Image Pre-trainig (CLIP~\cite{Radford2021CLIP}) is a self-supervised learning method that learns representations by matching encoded vectors of images and their text captions. We adapt CLIP to OCT images by using co-registered Pre-IVL, Post-IVL, and Post-Stent images. We use the same nnUNet architecture as in Section~\ref{sec:design:nnunet} to pre-traine CLIP on and fine-tune the final model on Calcium OCT. Note that the original paper does not publish the code for CLIP, we modify the code from a publicly available project~\cite{Shariatnia2021}. Original paper proposes a pre-training framework on language and image. However, we apply the framework on multi-modalities of OCT images. We will discuss the adaptation of the framework to our specific use case in Section~\ref{sec:implementation:clip}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}
