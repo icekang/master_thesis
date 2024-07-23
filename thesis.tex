@@ -13,7 +13,7 @@
 \usepackage[MScThesis,lablogo]{EPFLreport}
 \usepackage{xspace}
 \usepackage{amsmath}
-
+\usepackage{subcaption}
 
 \title{Self-supervised learning\\for calcium segmentation on coronary OCT images}
 \author{Naravich Chutisilp}
@@ -230,6 +230,37 @@ Genesis also has publicly available code~\cite{Zhou2021}. However, only pseudo c
 Because of V-JEPA's lack of evaluation on segmentation tasks, it is necessary to design a decoder head for V-JEPA. The paper proposes an attentive decoder head for classification tasks. Therefore, we also develop an attentive decoder head for segmentation, drawing inspiration from the MAE framework~\cite{He2022}, which directly predicts pixel values.Specifically, the decoder head is an encoder-only transformer of 1 depth and 12 heads followed by a linear projection layer that yields embedding vectors into a vector of size \(\text{patch size} \times \text{patch size} \times \text{number of classes}\). Besides, we also experiment with other variations of decoding architecture, such as a simple batch normalization layer followed by a linear projection, similar how RADIO~\cite{Ranzinger2024RADIO} and DINOv2~\cite{Oquab2024dinov} fine-tune their models on segmentation tasks. Additionally, inspired by SegFormer~\cite{Xie2021SegFormer}, we also experiment with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986}) on each feature vectors at different depths followed by a linear projection to combine those features into a segmentation mask. This enables the decoder to multiple features at different levels. Unlike SegFormer, each features are not downsampled, so they are not explicitly forced to be different resolutions. However, this methods allows us to preserve the original architecture of V-JEPA's pre-training. Thus, we can utilize their pre-trained weight on our segmentation task.
 
 % TODO: add images of the decoder head (attentive, batch norm, mlp)
+
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=0.9\linewidth]{figures/fig_implementation_vjepa_attentive_and_batchnorm_decoder.pdf}
+%     \caption{Attentive and batch normalization decoder head for V-JEPA.}
+%     \label{fig:vjepa-attentive-and-batchnorm-decoder-head}
+% \end{figure}
+
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=0.9\linewidth]{figures/fig_implementation_vjepa_multifeat.pdf}
+%     \caption{Multi-feature decoder head for V-JEPA.}
+%     \label{fig:vjepa-multi-feature-decoder-head}
+% \end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}{0.9\textwidth}
+        \centering
+        \includegraphics[width=0.6\linewidth]{figures/fig_implementation_vjepa_attentive_and_batchnorm_decoder.pdf}
+        \caption{Attentive and linear batch normalization decoder head.}
+        \label{fig:vjepa-attentive-and-batchnorm-decoder-head}
+    \end{subfigure}
+    \begin{subfigure}{0.9\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figures/fig_implementation_vjepa_multifeat.pdf}
+        \caption{Linear batch norm decoder head.}
+        \label{fig:vjepa-multi-feature-decoder-head}
+    \end{subfigure}
+    \caption{Decoder heads for V-JEPA.}
+\end{figure}
 
 \section{Multi-modal Self-Supervised Learning - CLIP}\label{sec:implementation:clip}
 Originally, the algorithm is designed for language-image pairs. However, we adapt the algorithm to multi-modalities of OCT images. To achieve this, we swap the text tokenizer of the original CLIP with an image encoder. From our experiments, we find that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. Our experiments do sanity check on different configurations by letting all pairs of image be the same image and see whether configurations can learn to match the same image. Since this is an easy case it should be able to encode the same image to the same vector. We test this on separate encoders and projectors, separate encoders and shared projectors, and shared encoders and projectors. We find that only separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image. Consequently, we test these two configurations on the main task of matching different images. We find only shared encoders and projectors can converge the losses down. This configuration is reasonable as the image encoder and its projector is forced to learn a representation that can be used for both modalities.
