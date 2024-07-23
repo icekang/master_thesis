@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-07-23T16:02:28.572Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0" etag="Ww40FaU0gA3K_0TowWcE" version="24.7.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-07-23T16:04:55.641Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0" etag="SC_uYJfRRefcZImkGAb1" version="24.7.1" type="github">
   <diagram name="Page-1" id="cO37kT2sqG0ceyI2VDh8">
     <mxGraphModel dx="3270" dy="2277" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -512,7 +512,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="fV0yyooUDu2cBFFDRjJw-323" value="Multi-feature Segmentator" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontColor=#61aaf4;" vertex="1" parent="1">
-          <mxGeometry x="866" y="1380" width="320" height="30" as="geometry" />
+          <mxGeometry x="1062" y="1400" width="320" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
