@@ -172,9 +172,19 @@ The unannotated datasets are of size $500\times 500$. They are not splitted into
     \label{fig:unannotated-oct}
 \end{figure}
 
-\section{Algorithms}
-% TODO: Something like "we select generative tasks for self-supervised learning on our datasets" but more detailed and fomal
+\section{Segmentation}
+\subsection{CNN-based Segmentation}
+\textbf{2D Segmentation} is a common approach for image segmentation. Convolutional layers are used to extract features from the input images. The layer uses 2D kernels that slide over the input image to extract features. U-Net introduces an encoder-decoder architecture with skip connections to explicitly utilizes features at different resolutions for segmentation. Encoder is a series of convolutional layers with downsampling, while decoder is a series of convolutional layers with upsampling. Skip connections are added between encoder and decoder to combine features at different resolutions. This enables the model to learn and utilize representations at different levels. Additionally, \textbf{3D Segmentation} changes 2D kernels to 3D kernels. This allows the model to work on 3D volumes directly, preserving the spatial information in the depth dimension. This allows the model to learn the features in 3D space, instead of in 2D space. It constrains the data to always be in 3D volumes, augmenting the cost of annotation and computation, at the same time, leverage more information from the data and potentially improve the performance of the model.
 
+%TODO: add a photo of U-Net architecture
+
+\subsection{Transformer-based Segmentation}
+% font bold
+Transformer-based \textbf{2D Segmentation} is an alternative approach to image segmentation. Instead of using convolutional layers, it pachifies the input image into patches and tokenized them using CNN. These tokens are added with positional information and fed into a transformer. There are several transformer-based architectures for image segmentation proposed in the literature. However, it is common in visual SSL that a linear projection layer is added to the output of the ViT to predict the segmentation masks. To enable a transformer model to do \textbf{3D Segmentation}, patchification must be modified to 3D patches, and the CNN-based tokenizer should operate on 3D kernels instead. In addition, the positional encoder should be modified to include the 3rd dimension. The rest of the architecture can be kept the same as 2D segmentation.
+
+%TODO add a photo of ViT architecture with linear projection
+
+\section{Algorithms}
 \subsection{CNN-based Supervised Learning - nnUNet}\label{sec:design:nnunet}
 nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. To apply the algorithm to our datasets, we designed two approaches. The first approach is to directly train the model on Calcium OCT. In addition to the former approach, on the second approach, we also pre-train the model on Lumen and Wall OCT before fine-tuning on Calcium OCT. 
 
@@ -271,7 +281,7 @@ Originally, the algorithm is designed for language-image pairs. However, we adap
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%
-\chapter{Evaluation}
+\chapter{Results and Discussion}
 %%%%%%%%%%%%%%%%%%%%
 
 In the evaluation you convince the reader that your design works as intended.
@@ -333,7 +343,7 @@ SuPReM suggests to pre-train models with supervised learning on a large annotate
 
 Rather than pre-training, nnUNet proposes a self-configuring framework for medical image segmentation. The framework automatically build UNet-like model for 2D and 3D medical images for a given dataset. It has been shown to robustly outperform state-of-the-art models, including popular Transformer-based and Mamba-base architectures, on several medical image segmentation tasks and works well on small datasets due to it robust positive data sampling and augmentation~\cite{Isensee2020}. Follow up work on nnUNet has been done showing that many reported results may not be reproducible due to many reasons. The study highlights that nnUNet is the consistently best performing model on the tasks it has been evaluated on without additional data~\cite{Isensee2024}.
 
-Previous work at IMES to segment OCT images have been done with SegFormer pre-trained with ADE20k. SegFormer is a ViT-based model that enforces multiple resulotion at different depths of the transformer. Simple MLP~\cite{Rumelhart1986} decoder heads are introduced to combine the features from different depths. The model has been shown to be state-of-the-art on segmentic segmentation at the time~\cite{Xie2021SegFormer}.
+Previous work at IMES to segment OCT images have been done with SegFormer pre-trained with ADE20k. SegFormer is a ViT-based model that enforces multiple resolution at different depths of the transformer. Simple MLP~\cite{Rumelhart1986} decoder heads are introduced to combine the features from different depths. The model has been shown to be state-of-the-art on segmentic segmentation at the time~\cite{Xie2021SegFormer}.
 
 Taking a different approach, RADIO proposes to learn representations from already learned models. RADIO is a student model that learns to predict a same feature from multiple teacher models, including DINOv2~\cite{Oquab2024dinov}, SAM~\cite{Kirillov2023SAM} and CLIP~\cite{Radford2021CLIP}. In addition, RADIO is trained to be resolution-agnostic, allowing it to understand images at different resolutions. RADIO has been shown to provide a high resolution feature map that can be used for downstream tasks~\cite{Ranzinger2024RADIO}. While SSLs has a great potential on medical imaging, their approaches should be compared to all other existing ones in order to ensure a comprehensive comparison.
 
