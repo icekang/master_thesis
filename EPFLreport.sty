@@ -73,6 +73,11 @@
   \def\@adviser{#1}
 }
 
+\def\@coadviser{Thesis Co-Advisor}
+\newcommand{\coadviser}[1]{
+  \def\@coadviser{#1}
+}
+
 \def\@supervisor{Thesis Supervisor}
 \newcommand{\supervisor}[1]{
   \def\@supervisor{#1}
@@ -131,14 +136,16 @@ by \@author\par
 \vspace{1.5\baselineskip}
 \@adviser\\
 Thesis Advisor \\[1\baselineskip]
+\@coadviser\\
+Thesis Co-Advisor \\[1\baselineskip]
 \@expert\\
 External Expert \\[1\baselineskip]
 \@supervisor\\
 Thesis Supervisor\par
 \centering
 \vspace{1\baselineskip}
-EPFL IC IINFCOM HEXHIVE \\
-BC 160 (Bâtiment BC) \\
+EPFL IC IINFCOM MLBIO \\
+IC – UPBRBIC – MLBIO \\
 Station 14 \\
 CH-1015 Lausanne \\[\baselineskip]
 \today
