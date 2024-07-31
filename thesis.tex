@@ -203,7 +203,7 @@ Because SwinUNTER is also, on its own, another transformer-based model with self
 
 
 \subsection{Unimodal Self-Supervised Learning - Genesis}
-Genesis is a self-supervised learning method that learns representations by restoring the original images from their corrupted versions~\cite{Zhou2021}. In their paper, Genesis is applied on a small U-Net architecture, containing 15M parameters. We adapt their method to the same 3D nnUNet architecture in Section~\ref{sec:design:nnunet}. Thereafter, we apply Genesis pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT.
+Genesis is a self-supervised learning method that learns representations by restoring the original images from their corrupted versions~\cite{Zhou2021}. In their paper, Genesis is applied on a U-Net architecture, containing 15M parameters. We adapt their method to the same 3D nnUNet architecture in Section~\ref{sec:design:nnunet} which is of 30M parameters. Thereafter, we apply Genesis pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT.
 
 % TODO: add a photo of Genesis framework
 
