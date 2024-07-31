@@ -181,7 +181,9 @@ The unannotated datasets are of size $500\times 500$. They are not splitted into
 \end{figure}
 \section{Algorithms}
 \subsection{CNN-based Supervised Learning - nnUNet}\label{sec:design:nnunet}
-nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. To apply the algorithm to our datasets, we designed two approaches. The first approach is to directly train the model on Calcium OCT. In addition to the former approach, on the second approach, we also pre-train the model on Lumen and Wall OCT before fine-tuning on Calcium OCT. 
+nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. First, the data fingerprint must be introduced, specifying number of image modalities, how should the algorithm normalize each modality and the number of segmentation classes and regions. Additional information about data including intensity ranges, spacing, shape, and resolution are derived from the data metadata themselves. With this fingerprint, nnUNet automatically decides the network topology, sampling strategy, batch size and patch size. It is also worth noting that nnUNet provides a supervised pre-training pipeline for the model to be trained on other datasets before fine-tuning on the target dataset.
+
+To apply the algorithm to our datasets, we designed two approaches. The first approach is to directly train the model on Calcium OCT. In addition to the former approach, on the second approach, we also pre-train the model on Lumen and Wall OCT before fine-tuning on Calcium OCT. 
 
 % Discuss 2D and 3D nnUNet for segmentation
 nnUNet provides both 2D- and 3D-segmentation architectures as well as a cascade 3D architecture of full resolution and low resolution networks. In our initial experiments, we find that 2D and 3D architecture are performing better than the cascade architecture. This leads us to subsequently only use 2D and 3D architectures for the rest of the experiments.
