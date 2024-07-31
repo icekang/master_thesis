@@ -191,8 +191,9 @@ nnUNet provides both 2D- and 3D-segmentation architectures as well as a cascade 
 % TODO: add a photo of nnUNet pipeline
 
 \subsection{Transformer-based Supervised Learning - SegFormer}
-SegFormer is a transformer-based model with multi-resolution feature fusion with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986})~\cite{Xie2021SegFormer}, and has been pre-trained on ADE20k~\cite{Zhou2018} datasets. Following the previous work, we use the pre-trained model to fine-tune on Calcium OCT.
+SegFormer is a transformer-based model with multi-resolution feature fusion with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986})~\cite{Xie2021SegFormer}, and has been pre-trained on ADE20k~\cite{Zhou2018} datasets. Resembling encoder of U-Net that downsamples the input image to lower resolution at each layer, SegFormer explicitly downsamples the input image with overlap patch merging which unifies adjacent patches into a single patch. This allows the model to learn the features at different resolutions. Furthermore, SegFormer employs these multi-resolution features with All-MLP decoder that projects lower resolution features to match their one-level higher resolution features' channels. The decoder then upsamples the features up to origianl resolution and concatenates them with the higher resolution features. Finally, the decoder predicts the segmentation masks all using only MLPs and upsampling layers. 
 
+SegFormer architectures are available in multiple sizes, from small to large, with the largest model, MiT-B5, containing 84.7 parameters. We use the largest pre-trained model to fine-tune on Calcium OCT for 80,000 iteration which we find is long enough to see the model converges.
 % TODO: add a photo of SegFormer architecture
 
 \subsection{Transformer-based Medical Supervised Learning - SuPReM}~\label{sec:design:suprem}
