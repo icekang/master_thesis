@@ -334,14 +334,23 @@ We evaluated 3 settings of SuPreM's SwinUNTER model, as described in Section~\re
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\linewidth]{figures/result_SwinUNETR_results.png}
+    \includegraphics[width=0.55\linewidth]{figures/result_SwinUNETR_results.png}
     \caption{Dice score of SuPreM's SwinUNTER model.}
     \label{fig:suprem-results}
+
 \end{figure}
 
-However, comparing the results of SuPreM's SwinUNTER model with the best 2D nnUNet model, we find that the 2D nnUNet model outperforms the SuPreM's SwinUNTER model. We will discuss this the next section.
+However, comparing the results of SuPreM's SwinUNTER model with the best 2D nnUNet model, we find that the 2D nnUNet model outperforms the SuPreM's SwinUNTER model (Figure~\ref{fig:transformer-results}). We will discuss this the next section.
 
 \section{Transformers-based Models}
+Effectiveness of the SegFormer, RADIO, and SwinUNTER pre-trained with SuPreM compared to nnUNet is summarized in Figure~\ref{fig:transformer-results}. We find that the best 3D nnUNet model all outperforms the transformer-based models. This effect could be fundamental differences between CNN and transformer architectures. CNNs are designed to learn local features while transformers are designed to learn global features. Calcium plaques in OCT images are localized, so CNNs are more suitable for this task. This is also supported by the fact that increasing the patch size in width and height dimension of 3D nnUNet does not improve the performance, while reducing the patch size in the depth dimension significantly improves the performance.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_vs_Transformer_results.png}
+    \caption{Dice score of transformer-based models compared to nnUNet.}
+    \label{fig:transformer-results}
+\end{figure}
 
 \section{V-JEPA}
 \section{CLIP}
