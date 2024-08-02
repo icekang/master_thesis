@@ -197,6 +197,9 @@ SegFormer is a transformer-based model with multi-resolution feature fusion with
 SegFormer architectures are available in multiple sizes, from small to large, with the largest model, MiT-B5, containing 84.7 parameters. We use the largest pre-trained model to fine-tune on Calcium OCT for 80,000 iteration which we find is long enough to see the model converges.
 % TODO: add a photo of SegFormer architecture
 
+\subsection{Transformer-based Supervised Learning - RADIO}
+RADIO is a distillation framework that allows one than one vision foundation models to be its teacher~\cite{Ranzinger2024RADIO}. The author evaluates the model on 2D segmentation task using batch normalization and linear projection as the decoder head. We follow the same evaluation setting in order to be able to utilize their pre-trained model which is a ViT model. We use RADIO pre-trained ViT-H/16 model and fine-tune it on Calcium OCT. The model is trained for 80,000 iterations which we find is long enough to see the model converges.
+
 \subsection{Transformer-based Medical Supervised Learning - SuPReM}~\label{sec:design:suprem}
 SuPReM is a supervised pre-training method for medical image segmentation~\cite{Li2024}. As we do not have a large annotated dataset, we use publicly available pre-trained models of the paper to fine-tune on Calcium OCT. Following their paper, we use their best performing model which is SwinUNTER~\cite{Tang2022} with their training scripts. SwinUNTER is a transformer-based model designed to segment brain tumors in 3D MRI images. The architecture is based on Swin transformer as its encoder which is a multi-scale transformer with shifted windows~\cite{Liu2021Swin}. SwinUNTER utilizes a CNN-based decoder called similar to UNTER, hence the name SwinUNTER. The decoder is a series of convolutional layers with upsampling merging features at different levels via skip connections~\cite{Hatamizadeh2022}.
 
@@ -231,6 +234,9 @@ We apply publicly available code from nnUNet~\cite{Isensee2020} on our datasets.
 
 \section{Transformer-based Supervised Learning - SegFormer}
 We use the pre-trained SegFormer model and their training script from MMSegmentation~\cite{mmseg2020}. As SegFormer only supports 2D segmentation, we preprocess our Calcium OCT datasets into 2D images with their segmentation masks, and train the model on the newly formatted dataset.
+
+\section{Transformer-based Supervised Learning - RADIO}
+We use the pre-trained RADIO model and their training script from available as MMSegmentation~\cite{mmseg2020}. As RADIO also only supports 2D segmentation, we share the same pre-processing datasets with SegFormer in Section~\ref{sec:implementation:segformer}.
 
 \section{Transformer-based Medical Supervised Learning - SuPReM}
 SuPReM has publicly available pre-trained model and codes~\cite{Li2024}. Thus, we format our Calcium OCT dataset into the same format as their datasets. Preserving their training algorithm, we use their fine-tuning script on our datasets. We experiment with three settings as described in Section~\ref{sec:design:suprem} as they are all available in their original codes.
