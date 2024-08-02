@@ -200,10 +200,10 @@ SegFormer architectures are available in multiple sizes, from small to large, wi
 \subsection{Transformer-based Supervised Learning - RADIO}
 RADIO is a distillation framework that allows one than one vision foundation models to be its teacher~\cite{Ranzinger2024RADIO}. The author evaluates the model on 2D segmentation task using batch normalization and linear projection as the decoder head. We follow the same evaluation setting in order to be able to utilize their pre-trained model which is a ViT model. We use RADIO pre-trained ViT-H/16 model and fine-tune it on Calcium OCT. The model is trained for 80,000 iterations which we find is long enough to see the model converges.
 
-\subsection{Transformer-based Medical Supervised Learning - SuPReM}~\label{sec:design:suprem}
-SuPReM is a supervised pre-training method for medical image segmentation~\cite{Li2024}. As we do not have a large annotated dataset, we use publicly available pre-trained models of the paper to fine-tune on Calcium OCT. Following their paper, we use their best performing model which is SwinUNTER~\cite{Tang2022} with their training scripts. SwinUNTER is a transformer-based model designed to segment brain tumors in 3D MRI images. The architecture is based on Swin transformer as its encoder which is a multi-scale transformer with shifted windows~\cite{Liu2021Swin}. SwinUNTER utilizes a CNN-based decoder called similar to UNTER, hence the name SwinUNTER. The decoder is a series of convolutional layers with upsampling merging features at different levels via skip connections~\cite{Hatamizadeh2022}.
+\subsection{Transformer-based Medical Supervised Learning - SuPreM}~\label{sec:design:suprem}
+SuPreM is a supervised pre-training method for medical image segmentation~\cite{Li2024}. As we do not have a large annotated dataset, we use publicly available pre-trained models of the paper to fine-tune on Calcium OCT. Following their paper, we use their best performing model which is SwinUNTER~\cite{Tang2022} with their training scripts. SwinUNTER is a transformer-based model designed to segment brain tumors in 3D MRI images. The architecture is based on Swin transformer as its encoder which is a multi-scale transformer with shifted windows~\cite{Liu2021Swin}. SwinUNTER utilizes a CNN-based decoder called similar to UNTER, hence the name SwinUNTER. The decoder is a series of convolutional layers with upsampling merging features at different levels via skip connections~\cite{Hatamizadeh2022}.
 
-Because SwinUNTER is also, on its own, another transformer-based model with self-supervised learning, we conduct three experimentals to evaluate the algorithms. The first setting directly utilizes the pre-trained model on SuPReM large datasets, and fine-tunes it on Calcium OCT. The second setting uses self-supervised SwinUNTER model, and fine-tunes it on Calcium OCT. The last setting uses SwinUNTER model without any pre-training, and trains it on Calcium OCT. Consequently, we can evaluate the effectiveness of SuPReM pre-training and self-supervised learning proposed in SwinUNTER on Calcium OCT.
+Because SwinUNTER is also, on its own, another transformer-based model with self-supervised learning, we conduct three experimentals to evaluate the algorithms. The first setting directly utilizes the pre-trained model on SuPreM large datasets, and fine-tunes it on Calcium OCT. The second setting uses self-supervised SwinUNTER model, and fine-tunes it on Calcium OCT. The last setting uses SwinUNTER model without any pre-training, and trains it on Calcium OCT. Consequently, we can evaluate the effectiveness of SuPreM pre-training and self-supervised learning proposed in SwinUNTER on Calcium OCT.
 
 \subsection{Unimodal Self-Supervised Learning - V-JEPA}
 V-JEPA is a self-supervised learning method that acquires representations by predicting the encoded vectors of the masked segments of a video~\cite{Bardes2024Vjepa}. We desgin two experiments to study the effectiveness of V-JEPA on OCT images. Firstly, we directly fine-tunes the pre-trained V-JEPA model on Calcium OCT. This means that the model is a simple ViT~\cite{Dosovitskiy2020vit} and is trained on natural videos and then fine-tuned on medical images . Secondly, we apply V-JEPA pre-training on unannotated OCT images, and fine-tune the resulting model on Calcium OCT. Since the original paper does not evaluate the model on segmentation tasks, we will discuss the implementation of the decoder head in Section~\ref{sec:implementation:vjepa}.
@@ -229,7 +229,7 @@ Contrastive Language-Image Pre-trainig (CLIP~\cite{Radford2021CLIP}) is a self-s
 
 % This section is usually 3-5 pages.
 \section{CNN-based Supervised Learning - nnUNet}
-We apply publicly available code from nnUNet~\cite{Isensee2020} on our datasets. Additionally, we add an early stopping to the optimizer and train for a longer period. As we find that 3D segmentation of nnUNet is performing significantly worse than its 2D counterpart, we experiment different patch sizes on 3D segmentation instead of its automatically configured patch size. We find that reducing the depth of the original patch size from $112$ to $32$ improves the performance significantly. This could be due to the fact that smaller depth allows the model to have more examples to learn from. In addition, inspired by SuPReM, we also experiment with supervised pre-training on Lumen and Wall OCT before fine-tuning on Calcium OCT. nnUNet provides a supervised pre-training script as well as a pipeline to fine-tune on new datasets.
+We apply publicly available code from nnUNet~\cite{Isensee2020} on our datasets. Additionally, we add an early stopping to the optimizer and train for a longer period. As we find that 3D segmentation of nnUNet is performing significantly worse than its 2D counterpart, we experiment different patch sizes on 3D segmentation instead of its automatically configured patch size. We find that reducing the depth of the original patch size from $112$ to $32$ improves the performance significantly. This could be due to the fact that smaller depth allows the model to have more examples to learn from. In addition, inspired by SuPreM, we also experiment with supervised pre-training on Lumen and Wall OCT before fine-tuning on Calcium OCT. nnUNet provides a supervised pre-training script as well as a pipeline to fine-tune on new datasets.
 
 \section{Transformer-based Supervised Learning - SegFormer}\label{sec:implementation:segformer}
 We use the pre-trained SegFormer model and their training script from MMSegmentation~\cite{mmseg2020}. As SegFormer only supports 2D segmentation, we preprocess our Calcium OCT datasets into 2D images with their segmentation masks, and train the model on the newly formatted dataset.
@@ -237,8 +237,8 @@ We use the pre-trained SegFormer model and their training script from MMSegmenta
 \section{Transformer-based Supervised Learning - RADIO}
 We use the pre-trained RADIO model and their training script from available as MMSegmentation~\cite{mmseg2020}. As RADIO also only supports 2D segmentation, we share the same pre-processing datasets with SegFormer in Section~\ref{sec:implementation:segformer}.
 
-\section{Transformer-based Medical Supervised Learning - SuPReM}
-SuPReM has publicly available pre-trained model and codes~\cite{Li2024}. Thus, we format our Calcium OCT dataset into the same format as their datasets. Preserving their training algorithm, we use their fine-tuning script on our datasets. We experiment with three settings as described in Section~\ref{sec:design:suprem} as they are all available in their original codes.
+\section{Transformer-based Medical Supervised Learning - SuPreM}
+SuPreM has publicly available pre-trained model and codes~\cite{Li2024}. Thus, we format our Calcium OCT dataset into the same format as their datasets. Preserving their training algorithm, we use their fine-tuning script on our datasets. We experiment with three settings as described in Section~\ref{sec:design:suprem} as they are all available in their original codes.
 
 \section{Unimodal Self-Supervised Learning - V-JEPA}\label{sec:implementation:vjepa}
 Because of V-JEPA's lack of evaluation on segmentation tasks, it is necessary to design a decoder head for V-JEPA. The paper proposes an attentive decoder head for classification tasks. 
@@ -330,9 +330,19 @@ Performance of nnUNet experiments on Calcium OCT dataset is summarized in Figure
 Additionally, pre-training the models with LaW OCT data set before fine-tuning on Calcium OCT significantly improves the 3D performance of models with their patch sizes reduced. Generally, calcium plaques around artery walls, so this pre-training allows the model to learn the features of the walls which can be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model.
 
 \section{SuPreM}
+We evaluated 3 settings of SuPreM's SwinUNTER model, as described in Section~\ref{sec:design:suprem}. The results are summarized in Figure~\ref{fig:suprem-results}. We find that SuPreM pre-training on SwinUNTER yields the best results with an average Dice score of $0.631\pm0.030$ which is statistically greater than the other two settings. This shows the effectiveness of SuPreM pre-training provides better features for image segmentation than self-supervised learning and no pre-training. The result is summarized in Figure~\ref{fig:suprem-results}.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/result_SwinUNETR_results.png}
+    \caption{Dice score of SuPreM's SwinUNTER model.}
+    \label{fig:suprem-results}
+\end{figure}
+
+However, comparing the results of SuPreM's SwinUNTER model with the best 2D nnUNet model, we find that the 2D nnUNet model outperforms the SuPreM's SwinUNTER model. We will discuss this the next section.
 
 \section{Transformers-based Models}
+
 \section{V-JEPA}
 \section{CLIP}
 \section*{Genesis}
@@ -394,7 +404,7 @@ A gap between pre-text tasks studied in medical imaging and those introduced in 
 \section{Self-supervised learning alternatives}
 Self-supervised learning has a great potential in medical imaging. If simple and robust pre-text tasks can be found, it can be used to learn representations from medical images without human annotations. However, such tasks are being explored and much work on the evaulation have to be done. Alternatives are introduced to efficiently train the models with existing small medical datasets.
 
-SuPReM suggests to pre-train models with supervised learning on a large annotated datasets. SuPReM collates 9,262 CT volumes, pre-trains a models to segment subset of organs and fine-tune them on mutually exclusive subset of organs. The experiments show that it requires less data to learn meaning representations than SSL while also provides better transferability~\cite{Li2024}.
+SuPreM suggests to pre-train models with supervised learning on a large annotated datasets. SuPreM collates 9,262 CT volumes, pre-trains a models to segment subset of organs and fine-tune them on mutually exclusive subset of organs. The experiments show that it requires less data to learn meaning representations than SSL while also provides better transferability~\cite{Li2024}.
 
 Rather than pre-training, nnUNet proposes a self-configuring framework for medical image segmentation. The framework automatically build UNet-like model for 2D and 3D medical images for a given dataset. It has been shown to robustly outperform state-of-the-art models, including popular Transformer-based and Mamba-base architectures, on several medical image segmentation tasks and works well on small datasets due to it robust positive data sampling and augmentation~\cite{Isensee2020}. Follow up work on nnUNet has been done showing that many reported results may not be reproducible due to many reasons. The study highlights that nnUNet is the consistently best performing model on the tasks it has been evaluated on without additional data~\cite{Isensee2024}.
 
