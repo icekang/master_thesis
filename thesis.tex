@@ -287,11 +287,15 @@ For fine-tuning, we load the pre-trained model encoder and decoder weight while 
 % However, only pseudo code is available in fine-tuning. Therefore, we adapt the code from nnUNet~\cite{Isensee2020} to Genesis for fine-tuning. By using the same architecture as nnUNet instead of Genesis's U-Net, we can simply replace the encoder and decoder of this pre-trained model to nnUNet training script. We use the best patch size found in Section~\ref{sec:design:nnunet} on Genesis for a fair comparison.
 
 \section{Multi-modal Self-Supervised Learning - CLIP}\label{sec:implementation:clip}
-Originally, the algorithm is designed for language-image pairs. However, we adapt the algorithm to multi-modalities of OCT images. To achieve this, we swap the text tokenizer of the original CLIP with an image encoder. From our experiments, we find that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. Our experiments do sanity check on different configurations by letting all pairs of image be the same image and see whether configurations can learn to match the same image. Since this is an easy case it should be able to encode the same image to the same vector. We test this on separate encoders and projectors, separate encoders and shared projectors, and shared encoders and projectors. We find that only separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image. Consequently, we test these two configurations on the main task of matching different images. We find only shared encoders and projectors can converge the losses down. This configuration is reasonable as the image encoder and its projector is forced to learn a representation that can be used for both modalities. This approach is illustrated in Figure~\ref{fig:clip-oct}.
+Originally, the algorithm is designed for language-image pairs. However, we adapt the algorithm to multi-modalities of OCT images. To achieve this, we swap the text tokenizer of the original CLIP with an image encoder. 
 
-\begin{figure}[ht]
+From our experiments, we find that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. Our experiments do sanity check on different configurations by letting all pairs of image be the same image and see whether configurations can learn to match the same image. Since this is an easy case it should be able to encode the same image to the same vector. We test this on separate encoders and projectors, separate encoders and shared projectors, and shared encoders and projectors. We find that only separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image. 
+
+Consequently, we test these two configurations on the main task of matching different images. We find only shared encoders and projectors can converge the losses down. This configuration is reasonable as the image encoder and its projector is forced to learn a representation that can be used for both modalities. This approach is illustrated in Figure~\ref{fig:clip-oct}.
+
+\begin{figure}[hb]
     \centering
-    \includegraphics[width=0.5\linewidth]{figures/fig_implementation_clip_oct.pdf}
+    \includegraphics[width=0.65\linewidth]{figures/fig_implementation_clip_oct.pdf}
     \caption{Modified CLIP for co-registered multi-modal OCT images. Note that the projector is omitted for simplicity.}
     \label{fig:clip-oct}
 \end{figure}
@@ -300,11 +304,38 @@ Originally, the algorithm is designed for language-image pairs. However, we adap
 \chapter{Results and Discussion}
 %%%%%%%%%%%%%%%%%%%%
 
-In the evaluation you convince the reader that your design works as intended.
-Describe the evaluation setup, the designed experiments, and how the
-experiments showcase the individual points you want to prove.
+% In the evaluation you convince the reader that your design works as intended.
+% Describe the evaluation setup, the designed experiments, and how the
+% experiments showcase the individual points you want to prove.
 
-This section is usually 5-10 pages.
+% This section is usually 5-10 pages.
+
+\section{nnUNet}
+Performance of nnUNet experiments on Calcium OCT dataset is summarized in Figure~\ref{fig:nnunet-results}. We find that default configuration of 3D nnUNet is significant lower than 2D nnUNet. To investigate further, we find that reducing the patch size of 3D nnUNet from $112$ to $32$ improves the performance significantly. This could be due to the fact that smaller depth allows the model to have more examples to learn from. In addition, comparing the patch size of $512\times 512\times 32$ and $160\times 128\times 32$ on 3D nnUNet, we can conclude that increase the patch size in the width and height dimension does not improve the performance as much. This may be due to the nature of calcium plaques in OCT images which are localized. Thus, increasing the context in the width and height dimension does not provide additional information to the model. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/result_nnunet_results.png}
+    \caption{Dice score of variations of nnUNet.}
+    \label{fig:nnunet-results}
+\end{figure}
+
+Additionally, pre-training the models with LaW OCT data set before fine-tuning on Calcium OCT significantly improves the 3D performance of models with their patch sizes reduced. Generally, calcium plaques around artery walls, so this pre-training allows the model to learn the features of the walls which can be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model.
+
+\section{SuPreM}
+
+\section{Transformers-based Models}
+\section{V-JEPA}
+\section{CLIP}
+\section*{Genesis}
+\section{Final}
+\section{Discussion}
+\subsection{Scale Analysis}
+\subsection{Visually Good Features}
+\subsection{V-JEPA Pre-training}
+\subsection{CLIP Pre-training}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%
