@@ -261,37 +261,24 @@ For fine-tuning, we load the pre-trained model encoder and decoder weight while 
 % However, only pseudo code is available in fine-tuning. Therefore, we adapt the code from nnUNet~\cite{Isensee2020} to Genesis for fine-tuning. By using the same architecture as nnUNet instead of Genesis's U-Net, we can simply replace the encoder and decoder of this pre-trained model to nnUNet training script. We use the best patch size found in Section~\ref{sec:design:nnunet} on Genesis for a fair comparison.
 
 \section{Unimodal Self-Supervised Learning - V-JEPA}\label{sec:implementation:vjepa}
-Because of V-JEPA's lack of evaluation on segmentation tasks, it is necessary to design a decoder head for V-JEPA. The paper proposes an attentive decoder head for classification tasks. Therefore, we also develop an attentive decoder head for segmentation, drawing inspiration from the MAE framework~\cite{He2022}, which directly predicts pixel values. Specifically, the decoder head is an encoder-only transformer of 1 depth and 12 heads followed by a linear projection layer that yields embedding vectors into a vector of size \(\text{patch size} \times \text{patch size} \times \text{number of classes}\). Besides, we also experiment with other variations of decoding architecture, such as a simple batch normalization layer followed by a linear projection, similar how RADIO~\cite{Ranzinger2024RADIO} and DINOv2~\cite{Oquab2024dinov} fine-tune their models on segmentation tasks. This is shown in Figure~\ref{fig:vjepa-attentive-and-batchnorm-decoder-head}. Additionally, inspired by SegFormer~\cite{Xie2021SegFormer}, we also experiment with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986}) on each feature vectors at different depths followed by a linear projection to combine those features into a segmentation mask. This enables the decoder to multiple features at different levels. Unlike SegFormer, each features are not downsampled, so they are not explicitly forced to be different resolutions. However, this methods allows us to preserve the original architecture of V-JEPA's pre-training. Thus, we can utilize their pre-trained weight on our segmentation task. Multi-feature decoder head is shown in Figure~\ref{fig:vjepa-multi-feature-decoder-head}.
+Because of V-JEPA's lack of evaluation on segmentation tasks, it is necessary to design a decoder head for V-JEPA. The paper proposes an attentive decoder head for classification tasks. 
 
-% \begin{figure}[ht]
-%     \centering
-%     \includegraphics[width=0.9\linewidth]{figures/fig_implementation_vjepa_attentive_and_batchnorm_decoder.pdf}
-%     \caption{Attentive and batch normalization decoder head for V-JEPA.}
-%     \label{fig:vjepa-attentive-and-batchnorm-decoder-head}
-% \end{figure}
+Therefore, we also develop an attentive decoder head for segmentation, drawing inspiration from the MAE framework~\cite{He2022}, which directly predicts pixel values. Specifically, the decoder head is an encoder-only transformer of 1 depth and 12 heads followed by a linear projection layer that yields embedding vectors into a vector of size \(\text{patch size} \times \text{patch size} \times \text{number of classes}\). Besides, we also experiment with other variations of decoding architecture, such as a simple batch normalization layer followed by a linear projection, similar how RADIO~\cite{Ranzinger2024RADIO} and DINOv2~\cite{Oquab2024dinov} fine-tune their models on segmentation tasks. This is shown in Figure~\ref{fig:vjepa-attentive-and-batchnorm-decoder-head}. 
 
-% \begin{figure}[ht]
-%     \centering
-%     \includegraphics[width=0.9\linewidth]{figures/fig_implementation_vjepa_multifeat.pdf}
-%     \caption{Multi-feature decoder head for V-JEPA.}
-%     \label{fig:vjepa-multi-feature-decoder-head}
-% \end{figure}
-
-\begin{figure}[t]
+\begin{figure}[ht]
     \centering
-    \begin{subfigure}{0.9\textwidth}
-        \centering
-        \includegraphics[width=0.6\linewidth]{figures/fig_implementation_vjepa_attentive_and_batchnorm_decoder.pdf}
-        \caption{Attentive and linear batch normalization decoder head.}
-        \label{fig:vjepa-attentive-and-batchnorm-decoder-head}
-    \end{subfigure}
-    \begin{subfigure}{0.9\textwidth}
-        \centering
-        \includegraphics[width=1.0\linewidth]{figures/fig_implementation_vjepa_multifeat.pdf}
-        \caption{Multi-features decoder head.}
-        \label{fig:vjepa-multi-feature-decoder-head}
-    \end{subfigure}
-    \caption{Decoder heads for V-JEPA.}
+    \includegraphics[width=0.6\linewidth]{figures/fig_implementation_vjepa_attentive_and_batchnorm_decoder.pdf}
+    \caption{Attentive and linear batch normalization decoder head.}
+    \label{fig:vjepa-attentive-and-batchnorm-decoder-head}
+\end{figure}%
+
+Additionally, inspired by SegFormer~\cite{Xie2021SegFormer}, we also experiment with simple multi-layer perceptrons (MLP~\cite{Rumelhart1986}) on each feature vectors at different depths followed by a linear projection to combine those features into a segmentation mask. This enables the decoder to multiple features at different levels. Unlike SegFormer, each features are not downsampled, so they are not explicitly forced to be different resolutions. However, this methods allows us to preserve the original architecture of V-JEPA's pre-training. Thus, we can utilize their pre-trained weight on our segmentation task. Multi-feature decoder head is shown in Figure~\ref{fig:vjepa-multi-feature-decoder-head}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/fig_implementation_vjepa_multifeat.pdf}
+    \caption{Multi-features decoder head.}
+    \label{fig:vjepa-multi-feature-decoder-head}
 \end{figure}
 
 \section{Multi-modal Self-Supervised Learning - CLIP}\label{sec:implementation:clip}
