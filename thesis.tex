@@ -367,6 +367,38 @@ There is no statistically significant difference between different decoder heads
 Besides V-JEPA pre-trained on VideoMix2M, we also evaluate V-JEPA pre-trained on unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on unannotated OCT images does not improve the performance of the ViT model on calcium segmentation. This is due to the magnitude of the dataset. Unannotated OCT images are only 300 volumes, while VideoMix2M contains 2M videos. This shows that the scale of the dataset is important for self-supervised learning on a transformer-based model.
 
 \section{CLIP}
+Performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}. We find that CLIP pre-training on OCT images significantly improves the performance of the 3D nnUNet model. In addition, we fail to reject the null hypothesis that CLIP is statistically comparable to 3D nnUNet model pre-trained on LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on LaW OCT dataset while the cost for co-registration is lower than the cost for annotating lumen and wall.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_CLIP_results.png}
+    \caption{Dice score of CLIP on Calcium OCT dataset compared to nnUNet.}
+    \label{fig:clip-results}
+\end{figure}
+
+The success of CLIP pre-training may come from the fact that aligning Pre-IVL and Post-IVL requires the model to learn the features of the lumen and wall which has been proven to be useful for calcium segmentation in nnUNet (LaW OCT). To prove this, we visualize the PCA of the features learned by CLIP compared to the features output from initial weight of the model. 
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_default_feature_map_batch0_feature1.png}
+        \caption{PCA of the features output from initial weight of the model.}
+        \label{fig:pca-initial}
+    \end{subfigure}
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_feature_map_batch0_feature1.png}
+        \caption{PCA of the features learned by CLIP.}
+        \label{fig:pca-clip}
+        
+    \end{subfigure}
+    \caption{PCA of the features output from initial weight of the model and the features learned by CLIP. CLIP pre-training gives more separable features on the walls than those from the initial weight of the model.}
+\end{figure}
+
+The co-registered dataset used in CLIP is Pre-IVL and Post-IVL. Therefore, similar experiment should be further studied on Pre-IVL and Post-Stent dataset. This is left for future work.
+
 \section{Genesis}
 \section{Final}
 \section{Discussion}
