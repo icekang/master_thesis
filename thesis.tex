@@ -280,7 +280,7 @@ Genesis has made their code available~\cite{Zhou2021}. Their implementation requ
         \caption{Samples of cubes from unannotated OCT images without threshold sampling strategy.}
         \label{fig:genesis-cubes-without-threshold}
     \end{subfigure}
-    \caption{Samples of cubes from unannotated OCT images. Each row is a sampled cube with slices unrolled along the depth dimension.}
+    \caption{Samples of cubes from unannotated OCT images. Each row is a sampled cube with slices unrolled along the depth dimension. With threshold sampling in \ref{fig:genesis-cubes-with-threshold}, the cubes are the wall area of the OCT images. Without threshold sampling in \ref{fig:genesis-cubes-without-threshold}, the cubes are mainly background noises.}
 \end{figure}
 
 For fine-tuning, we load the pre-trained model encoder and decoder weight while leaving the segmentation head to be randomly initialized. Subsequently, we fine-tune the pre-trained model on Calcium OCT dataset. This is similar to how nnUNet supervised pre-training is implemented. We experiment with different patch size on Genesis, as they are not pre-trained on the same patch size as 3D nnUNet. We find the most suitable patch size for Genesis to be $32\times 128\times 128$.
