@@ -400,13 +400,32 @@ The success of CLIP pre-training may come from the fact that aligning Pre-IVL an
 The co-registered dataset used in CLIP is Pre-IVL and Post-IVL. Therefore, similar experiment should be further studied on Pre-IVL and Post-Stent dataset. This is left for future work.
 
 \section{Genesis}
-\section{Final}
+\section{Final Results}
+The results of the best model in each category are summarized in Figure~\ref{fig:results}. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.
+
+In SSL,
+V-JEPA pre-trained on unannotated OCT images is significantly lower than 2D nnUNet. As discussed in the previous section, the scale of the dataset may play an important role in transformer-based self-supervised learning.
+%TODO: wait for Genesis
+CLIP pre-training on co-registered multi-modal OCT images is statisti.cally comparable to 2D nnUNet model. Additionally, it is comparable to 3D nnUNet model pre-trained on LaW OCT dataset. This shows that CLIP can be equally effective as supervised pre-training while costing less for annotation.
+
+From our experiments, transformer-based models' Dice scores are significantly less than 2D nnUNet's. Transformer provides attention mechanism that allows the model to combine features from different parts of the image. In contrast, CNNs' kernels are designed to learn local features. Since calcium plaques generally lie around the artery walls, CNNs are more suitable for this task. In addition, the scale of the dataset may play an important role. nnUNet is designed for small- to medium-sized medical datasets.
+Scaling up the size of the dataset and model parameters will not be advantageous for CNNs when these two magnitudes reach a certain point. On the contrary, transformers benefit from scaling. % TODO: paper to support this
+This study does not serve to prove that nnUNet is better than transformers in general. It only shows that nnUNet is more suitable for calcium segmentation on OCT images with the current scale of the dataset and model parameters.
+
+Finally, the best model in our study is 2D nnUNet with an average Dice score of $0.753\pm0.006$. It is non trivial to note that 2D nnUNet does not benefit from pre-training on other datasets, as treating the dataset into 2D images is enough for the model to learn the features of the calcium plaques. However, the best 3D nnUNet is achieved by pre-training on LaW OCT dataset. It is equally vital to note that patch size of 3D nnUNet is crucial for the performance of the model. Reducing the patch size in the depth dimension augments the performance significantly, while providing more context in the width and height dimension does not improve the performance. This mirrors the nature of annotating the calcium plaques in OCT images. Calcium plaques are identified by their change in intensity around the artery walls. Therefore, x-y plane context does not provide additional information to the model. Similarly, calcium, more often than not, occurs between adjacent slices. There is no need for the model to have more context in the depth dimension.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/result_best_in_class_results.png}
+    \caption{Summary of the results. The best model in each category is illustrated. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.}
+    \label{fig:results}
+\end{figure}
+
 \section{Discussion}
 \subsection{Scale Analysis}
 \subsection{Visually Good Features}
 \subsection{V-JEPA Pre-training}
 \subsection{CLIP Pre-training}
-
 
 
 
