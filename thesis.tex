@@ -353,6 +353,19 @@ Effectiveness of the SegFormer, RADIO, and SwinUNTER pre-trained with SuPreM com
 \end{figure}
 
 \section{V-JEPA}
+First, performace of different decoder heads is summarized in Figure~\ref{fig:vjepa-decoder-results}. Each experiment is denoted by its architecture and its decoder head. In parenthesis indicates V-JEPA pre-trained on which dataset. The control experiment is ViT + Attentive* which is only ViT model with attentive decoder head and intensive data augmentation and positive data sampling rate without V-JEPA pre-training.
+
+There is no statistically significant difference between different decoder heads. However, it can be concluded that the representation learned by V-JEPA on 2M natural videos, named \textbf{ViT + Attentive* (V-JEPA VideoMix2M)}, statistically significantly improves the performance of the ViT model on calcium segmentation, named \textbf{ViT + Attentive*}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/result_VJEPA_results.png}
+    \caption{Dice score of V-JEPA's decoder head. BNLinear is batch normalization followed by linear projection. Attentive is the attentive decoder head. Attentive* is attentive decoder head with more intensed data augmentation and positive data sampling rate. MultiFeat is the multi-features decoder head. In the parenthesis indicates the data used for pre-training.}
+    \label{fig:vjepa-decoder-results}
+\end{figure}
+
+Besides V-JEPA pre-trained on VideoMix2M, we also evaluate V-JEPA pre-trained on unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on unannotated OCT images does not improve the performance of the ViT model on calcium segmentation. This is due to the magnitude of the dataset. Unannotated OCT images are only 300 volumes, while VideoMix2M contains 2M videos. This shows that the scale of the dataset is important for self-supervised learning on a transformer-based model.
+
 \section{CLIP}
 \section{Genesis}
 \section{Final}
