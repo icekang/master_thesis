@@ -262,7 +262,7 @@ Additionally, inspired by SegFormer~\cite{Xie2021SegFormer}, we also experiment 
 \end{figure}
 
 \section{Unimodal Self-Supervised Learning - Genesis}
-Genesis has made their code available~\cite{Zhou2021}. Their implementation requires first to pre-process unannotated OCT images into small cubes of size $64\times 64\times 64\times 32$. These cubes will then be loaded and corrupted on the fly while training. It is nothing that the author recommends $96$ cubes per volume as increasing the number of cubes per volume may not improve the performance while increasing the computation cost. We follow this recommendation and apply a sampling strategy to randomly sample $96$ cubes from each volume. This is done to ensure that the cubes sampled contain enough information to learn the representations as OCT images are filled with background unlike CT images used in the original paper. The sampling strategy is done by calculating the average intensity of each cube and resample the cube if the average intensity is below a certain threshold. The resulting cubes can be seen in Figure~\ref{fig:genesis-cubes-with-threshold}. Without this strategy, the sampled cubes are mainly background noises which is shown in Figure~\ref{fig:genesis-cubes-without-threshold}. We then train the model on these cubes until convergence.
+Genesis has made their code available~\cite{Zhou2021}. Their implementation requires first to pre-process unannotated OCT images into small cubes of size $64\times 64\times 64\times 32$. These cubes will then be loaded and corrupted on the fly while training. The author recommends $96$ cubes per volume as increasing the number of cubes per volume may not improve the performance while increasing the computation cost. We follow this recommendation and apply a sampling strategy to randomly sample $96$ cubes from each volume. This is done to ensure that the cubes sampled contain enough information to learn the representations as OCT images are filled with background unlike CT images used in the original paper. The sampling strategy is done by calculating the average intensity of each cube and resample the cube if the average intensity is below a certain threshold. The resulting cubes can be seen in Figure~\ref{fig:genesis-cubes-with-threshold}. Without this strategy, the sampled cubes are mainly background noises which is shown in Figure~\ref{fig:genesis-cubes-without-threshold}. We then train the model on these cubes until convergence.
 
 \begin{figure}[t]
     \centering
@@ -283,8 +283,7 @@ Genesis has made their code available~\cite{Zhou2021}. Their implementation requ
     \caption{Samples of cubes from unannotated OCT images. Each row is a sampled cube with slices unrolled along the depth dimension. With threshold sampling in \ref{fig:genesis-cubes-with-threshold}, the cubes are the wall area of the OCT images. Without threshold sampling in \ref{fig:genesis-cubes-without-threshold}, the cubes are mainly background noises.}
 \end{figure}
 
-For fine-tuning, we load the pre-trained model encoder and decoder weight while leaving the segmentation head to be randomly initialized. Subsequently, we fine-tune the pre-trained model on Calcium OCT dataset. This is similar to how nnUNet supervised pre-training is implemented. We experiment with different patch size on Genesis, as they are not pre-trained on the same patch size as 3D nnUNet. We find the most suitable patch size for Genesis to be $32\times 128\times 128$.
-% However, only pseudo code is available in fine-tuning. Therefore, we adapt the code from nnUNet~\cite{Isensee2020} to Genesis for fine-tuning. By using the same architecture as nnUNet instead of Genesis's U-Net, we can simply replace the encoder and decoder of this pre-trained model to nnUNet training script. We use the best patch size found in Section~\ref{sec:design:nnunet} on Genesis for a fair comparison.
+For fine-tuning, we load the pre-trained model encoder and decoder weight back to the 3D nnUNet while leaving the segmentation head to be randomly initialized. Subsequently, we fine-tune the pre-trained model on Calcium OCT dataset. This is similar to how nnUNet supervised pre-training is implemented. Following the finding of the 3D nnUNet, we fine-tune the model with the best patch size found in Section~\ref{sec:design:nnunet}, which is $160\times 128\times 32$. For nnUNet training to be standardized, we use the nnUNet's training script with the same hyperparameters as the supervised pre-training and provide the pre-trained model as the initial weight.
 
 \section{Multi-modal Self-Supervised Learning - CLIP}\label{sec:implementation:clip}
 Originally, the algorithm is designed for language-image pairs. However, we adapt the algorithm to multi-modalities of OCT images. To achieve this, we swap the text tokenizer of the original CLIP with an image encoder. 
@@ -380,16 +379,15 @@ The success of CLIP pre-training may come from the fact that aligning Pre-IVL an
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[t]{\textwidth}
+    \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.9\linewidth]{figures/discussion_default_feature_map_batch0_feature1.png}
+        \includegraphics[width=\linewidth]{figures/discussion_default_feature_map_batch0_feature1.png}
         \caption{PCA of the features output from initial weight of the model.}
         \label{fig:pca-initial}
-    \end{subfigure}
-
-    \begin{subfigure}[t]{\textwidth}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_feature_map_batch0_feature1.png}
+        \includegraphics[width=\linewidth]{figures/discussion_clip_feature_map_batch0_feature1.png}
         \caption{PCA of the features learned by CLIP.}
         \label{fig:pca-clip}
         
@@ -400,6 +398,16 @@ The success of CLIP pre-training may come from the fact that aligning Pre-IVL an
 The co-registered dataset used in CLIP is Pre-IVL and Post-IVL. Therefore, similar experiment should be further studied on Pre-IVL and Post-Stent dataset. This is left for future work.
 
 \section{Genesis}
+Genesis pre-training on unannotated OCT images yields $0.744\pm0.000$ Dice score on Calcium OCT dataset. However, Genesis does not statistically significantly improves the performance of the 3D nnUNet model based on the one-sided paired t-test. Nevertheless, according to the two-sided paired t-test, we can conclude that Genesis has a comparable performance with pre-trained 3D nnUNet on LaW OCT as well as the best 2D nnUNet. The result and statistical tests are summarized in Figure~\ref{fig:genesis-results}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_Genesis_results.png}
+    \caption{Dice score of Genesis on Calcium OCT dataset. In the parenthesis indicates the algorithms used for pre-training. Genesis is the pre-training on unannotated OCT images. Genesis significantly improves the performance of the 3D nnUNet model.}
+    \label{fig:genesis-results}    
+\end{figure}
+
+
 \section{Final Results}
 The results of the best model in each category are summarized in Figure~\ref{fig:results}. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.
 
