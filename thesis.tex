@@ -517,9 +517,51 @@ One way to determine V-JEPA convergence is to plot the hidden features from targ
 \end{figure}
 
 \subsection{CLIP Pre-training}
+As mentioned in the Section~\ref{sec:implementation:clip}, CLIP needs a shared encoder and projector for the pre-training to converge. In this section, we show the sanity check taken and the results for the future works that may want to adapt CLIP to multi-modalities of OCT images.
 
+We first do a sanity check of CLIP by training the model to match the same image with the same crop as shown in Figure~\ref{fig:clip-sanity-check-same-image}. This is a much simpler problem and it configuration that does not learn to match the same image will not be able to match co-registered multi-modal OCT images. We then train the model to match the Pre-IVL and Post-IVL images as shown in Figure~\ref{fig:clip-sanity-check-different-image}. This is the main task of CLIP. We find that only shared encoder and projector can converge the losses down.
 
+\begin{figure}[hbt]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_same_image.png}
+        \caption{Same image}
+        \label{fig:clip-sanity-check-same-image}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_pre-ivl_post-ivl_image.png}
+        \caption{Pre-IVL and Post-IVL}
+        \label{fig:clip-sanity-check-different-image}
+    \end{subfigure}\\
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_same_image_diff_enc_diff_proj_logits.png}
+        \caption{Co-similarity matrix of different encoders and projectors on the same images.}
+        \label{fig:clip-cosimilarity-diff-enc-proj}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_same_image_diff_enc_shared_proj_logits.png}
+        \caption{Co-similarity matrix of different encoders and shared projectors on the same images.}
+        \label{fig:clip-cosimilarity-same-enc-proj}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_clip_same_image_shared_enc_shared_proj_logits.png}
+        \caption{Co-similarity matrix of shared encoders and projectors on the different images.}
+        \label{fig:clip-cosimilarity-shared-enc-proj}
+    \end{subfigure}
+    \caption{Sanity check of CLIP. The model is trained to match the same image and different crops of the same image.}
+    \label{fig:clip-sanity-check}
+\end{figure}
 
+To determine whether the model is learning, we can plot co-similarity matrix of the features output from the model. As shown in Figure~\ref{fig:clip-cosimilarity-diff-enc-proj}, using different encoders and projectors does not converge the losses down. In contrast, with a shared projector, the losses are converged down as shown in Figure~\ref{fig:clip-cosimilarity-same-enc-proj} using the same images. However, it does not converge the losses down when using different images. Only shared encoders and projectors can converge the losses down as shown in Figure~\ref{fig:clip-cosimilarity-shared-enc-proj} using different image.
+
+Unlike language and image, different modalities of OCT images are not as distinct. Thus, having to learn to align hidden features of with different encoders and projectors may add noises during the initial training phase leading to the model not being able to converge the losses down. 
 %%%%%%%%%%%%%%%%%%%%%%
 \chapter{Related Work}
 %%%%%%%%%%%%%%%%%%%%%%
