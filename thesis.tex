@@ -466,6 +466,15 @@ Visually good features do no always lead to a better performance as the distinct
     \label{fig:visually-good-features}
 \end{figure}
 
+Visualizing ViT (RADIO) also supports this hypothesis. Shown in Figure~\ref{fig:radio-features}, features from ViT (RADIO) is humanly interpretable as it can successfully distinguish OCT image semantics. The border between the background and where the waves could travel is clearly visible. However, the features on the artery walls are not as distinct. This can be the reason why ViT (RADIO) does not perform well in terms of Dice score.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=0.35\textwidth]{figures/discussion_radio_feature.png}
+    \caption{PCA of the features output from ViT (RADIO). The middle column is a PCA of the features with first principal component kept. The right column is with first principal component removed.}
+    \label{fig:radio-features}
+\end{figure}
+
 \subsection{V-JEPA Pre-training}
 \subsection{CLIP Pre-training}
 
