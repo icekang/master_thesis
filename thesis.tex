@@ -476,6 +476,38 @@ Visualizing ViT (RADIO) also supports this hypothesis. Shown in Figure~\ref{fig:
 \end{figure}
 
 \subsection{V-JEPA Pre-training}
+Unlike Genesis, where loss and semantic check of how the model is learning on the pre-text task can be determined easily, V-JEPA does not. We experiment with different configurations of V-JEPA pre-training on our unannotated OCT images. We face difficulty in converging the loss. As shown in Figure~\ref{fig:v-jepa-training}, the loss curve of ViT-L (V-JEPA Unannotated OCT) is converging, but it is sensitive to the configurations used.
+
+\begin{figure}[hbt]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_vjepa_training_1.png}
+        \caption{ViT-L (V-JEPA Unannotated OCT)}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_vjepa_training_2.png}
+        \caption{ViT-S (V-JEPA Unannotated OCT)}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_vjepa_training_3.png}
+        \caption{ViT-L (V-JEPA Unannotated OCT) with more weight decay}
+    \end{subfigure}
+    \caption{Different loss curves of V-JEPA pre-training on unannotated OCT images with different configuration.}
+    \label{fig:v-jepa-training}
+\end{figure}
+
+One way to determine V-JEPA convergence is to plot the hidden features from target encoder and compare that to the context encoder. Illustrated in the Figure~\ref{fig:v-jepa-prediction}, the pretraining can succeed the V-JEPA pre-text task of predicting the hidden features of the masked out parts of the video. In contrast to Genesis, or other pixel-level prediction pre-text tasks, it can not be easily determined if the prediction is correct. This is the trade-off of using V-JEPA which is more computationaly efficient than MAE, but harder to determine if the model is learning the correct features.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/discussion_vjepa_prediction.png}
+    \caption{Hidden features from target encoder and context encoder of ViT-L (V-JEPA Unannotated OCT) over training epochs. At the bottom row shows different hidden features from the target encoder and context encoder in the last epoch.}
+    \label{fig:v-jepa-prediction}
+\end{figure}
+
 \subsection{CLIP Pre-training}
 
 
