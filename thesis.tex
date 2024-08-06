@@ -431,6 +431,17 @@ Finally, the best model in our study is 2D nnUNet with an average Dice score of 
 
 \section{Discussion}
 \subsection{Scale Analysis}
+We do an initial study on the scale of the dataset used to train the model and their effect on the performance of the model. We subsample the training set of the Calcium OCT dataset to 33\% (1 training image and 1 validation image) and 66\% (3 training and 1 validation) of the original size. As shown in Figure~\ref{fig:scale-analysis}, the supervised pre-training on LaW OCT dataset is shown to be more reliable than self-supervised learning on a smaller dataset as they yields a lower standard deviation of dice score while the average dice score is higher. CLIP, on the other hand, is shown to be more affected in the lowest scale of the dataset. It has a lower average dice score and a higher standard deviation of dice score. 
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/discussion_scale_analysis.png}
+    \caption{Dice score of 2D and 3D nnUNet on Calcium OCT dataset subsampled to 33\% and 66\% of the original size.}
+    \label{fig:scale-analysis}
+\end{figure}
+
+We hypothesize 2 possible scenarios. One is that 8 volumes with 4 training, 2 validation and 2 testing volumes are already in a low data regime, making them lower as we study then does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low data regime. The other is that CLIP features are not as effective as supervised pre-training features as CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns the features of the lumen and wall. This leads to more data needed for CLIP to translate the implicit features to the explicit features as we see CLIP thrives as the scale of the dataset increases. We recommend more study to be done on the scale of the dataset as this study is only preliminary and may not be conclusive.
+
 \subsection{Visually Good Features}
 \subsection{V-JEPA Pre-training}
 \subsection{CLIP Pre-training}
