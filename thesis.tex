@@ -443,6 +443,29 @@ We do an initial study on the scale of the dataset used to train the model and t
 We hypothesize 2 possible scenarios. One is that 8 volumes with 4 training, 2 validation and 2 testing volumes are already in a low data regime, making them lower as we study then does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low data regime. The other is that CLIP features are not as effective as supervised pre-training features as CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns the features of the lumen and wall. This leads to more data needed for CLIP to translate the implicit features to the explicit features as we see CLIP thrives as the scale of the dataset increases. We recommend more study to be done on the scale of the dataset as this study is only preliminary and may not be conclusive.
 
 \subsection{Visually Good Features}
+Visually good features do no always lead to a better performance as the distinction of the most important weighs more than the aesthetics of the features. We visualize the features from V-JEPA (VideoMix2M) and from its initial weight. Shown in Figure~\ref{fig:visually-good-features}, both retain the structure of the artery walls. However, the features from V-JEPA (VideoMix2M) puts background into the same cluster and give more distinction to the artery walls. This can be the reason why V-JEPA (VideoMix2M) improves the performance of the model. While the features from the initial weight of the model keep the original structure and the structure of the artery walls is visible to human eyes, a close look into the color of the features shows that the artery walls are not as distinguishable from the background or any other structures as they are blended into a gradient of colors. What might be deceivingly good features to human eyes may not be the best features for the model to learn from.
+
+\begin{figure}[hbt]
+    \centering
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_visual_vjepa_input.jpg}
+        \caption{Input image}
+    \end{subfigure}\\
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_visual_vjepa_initial.jpg}
+        \caption{PCA feature from ViT with initial weight}
+    \end{subfigure}\\
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/discussion_visual_vjepa_pretrained.jpg}
+        \caption{PCA feature from ViT with V-JEPA pre-trained weight}
+    \end{subfigure}
+    \caption{PCA of the features output from initial weight of the model and the features learned by V-JEPA. A volume is unrolled along the depth dimension.}
+    \label{fig:visually-good-features}
+\end{figure}
+
 \subsection{V-JEPA Pre-training}
 \subsection{CLIP Pre-training}
 
