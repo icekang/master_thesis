@@ -322,7 +322,9 @@ Performance of nnUNet experiments on Calcium OCT dataset is summarized in Figure
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/result_nnunet_results.png}
-    \caption{Dice score of variations of nnUNet. Results are groups according to the patch size used in training. Results in hashes indicate supervised pre-training on lumen and wall dataset (LaW OCT). The one-sided paired t-test is done between with and without supervised pre-training. It is also done between the best 2D nnUNet model and supervised pre-trained 3D nnUNet model. Lastly, the test is done between supervised pre-trained 3D nnUNet models.}
+    \caption{Dice score of variations of nnUNet. Results are groups according to the patch size used in training. Results in hashes indicate supervised pre-training on lumen and wall dataset (LaW OCT). 
+    % The one-sided paired t-test is done between with and without supervised pre-training. It is also done between the best 2D nnUNet model and supervised pre-trained 3D nnUNet model. Lastly, the test is done between supervised pre-trained 3D nnUNet models.
+    }
     \label{fig:nnunet-results}
 \end{figure}
 
@@ -331,9 +333,9 @@ Additionally, pre-training the models with LaW OCT data set before fine-tuning o
 \section{SuPreM}
 We evaluated 3 settings of SuPreM's SwinUNTER model, as described in Section~\ref{sec:design:suprem}. The results are summarized in Figure~\ref{fig:suprem-results}. We find that SuPreM pre-training on SwinUNTER yields the best results with an average Dice score of $0.631\pm0.030$ which is statistically greater than the other two settings. This shows the effectiveness of SuPreM pre-training provides better features for image segmentation than self-supervised learning and no pre-training. The result is summarized in Figure~\ref{fig:suprem-results}.
 
-\begin{figure}[h]
+\begin{figure}[hbt]
     \centering
-    \includegraphics[width=0.55\linewidth]{figures/result_SwinUNETR_results.png}
+    \includegraphics[width=0.5\linewidth]{figures/result_SwinUNETR_results.png}
     \caption{Dice score of SuPreM's SwinUNTER model. In the parenthesis indicate pre-training algorithms. SuPreM pre-training on SwinUNTER yields the best results and is significantly better than both self-supervised pre-training and training it from scratch.}
     \label{fig:suprem-results}
 
@@ -344,9 +346,9 @@ However, comparing the results of SuPreM's SwinUNTER model with the best 2D nnUN
 \section{Transformers-based Models}
 Effectiveness of the SegFormer, RADIO, and SwinUNTER pre-trained with SuPreM compared to nnUNet is summarized in Figure~\ref{fig:transformer-results}. We find that the best 3D nnUNet model all outperforms the transformer-based models. This effect could be fundamental differences between CNN and transformer architectures. CNNs are designed to learn local features while transformers are designed to learn global features. Calcium plaques in OCT images are localized, so CNNs are more suitable for this task. This is also supported by the fact that increasing the patch size in width and height dimension of 3D nnUNet does not improve the performance, while reducing the patch size in the depth dimension significantly improves the performance.
 
-\begin{figure}[h]
+\begin{figure}[hbt]
     \centering
-    \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_vs_Transformer_results.png}
+    \includegraphics[width=0.6\linewidth]{figures/result_nnUNet_vs_Transformer_results.png}
     \caption{Dice score of transformer-based models compared to nnUNet. Compared to the best 3D nnUNet model pre-trained on LaW OCT dataset, Dice scores of transformer-based models are statistically significantly lower.}
     \label{fig:transformer-results}
 \end{figure}
@@ -356,7 +358,7 @@ Performace of different decoder heads is summarized in Figure~\ref{fig:vjepa-dec
 
 There is no statistically significant difference between different decoder heads. However, it can be concluded that the representation learned by V-JEPA on 2M natural videos, named \textbf{ViT + Attentive* (V-JEPA VideoMix2M)}, statistically significantly improves the performance of the ViT model on calcium segmentation, named \textbf{ViT + Attentive*}.
 
-\begin{figure}[h]
+\begin{figure}[hbt]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/result_VJEPA_results.png}
     \caption{Dice score of V-JEPA's decoder head. BNLinear is batch normalization followed by linear projection. Attentive signifies the attentive decoder head. Attentive* means attentive decoder head with more intensed data augmentation and positive data sampling rate. MultiFeat connotes the multi-features decoder head. In the parenthesis indicates the algorithm and the data used for pre-training.}
@@ -371,7 +373,9 @@ Performance of CLIP pre-training on co-registered multi-modal OCT images is summ
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_CLIP_results.png}
-    \caption{Dice score of CLIP on Calcium OCT dataset compared to nnUNet. In the parenthesis indicates the algorithms used for pre-training. LaW OCT is the supervised pre-training on Lumen and Wall OCT dataset. CLIP is the pre-training on co-registered multi-modal OCT images. Both supervised and CLIP pre-training significantly improves the performance of the 3D nnUNet model. They are statistically comparable to each other, and to the best 2D nnUNet model.}
+    \caption{Dice score of CLIP on Calcium OCT dataset compared to nnUNet. In the parenthesis indicates the algorithms used for pre-training. LaW OCT is the supervised pre-training on Lumen and Wall OCT dataset. CLIP is the pre-training on co-registered multi-modal OCT images.
+    %  Both supervised and CLIP pre-training significantly improves the performance of the 3D nnUNet model. They are statistically comparable to each other, and to the best 2D nnUNet model.
+    }
     \label{fig:clip-results}
 \end{figure}
 
@@ -392,7 +396,9 @@ The success of CLIP pre-training may come from the fact that aligning Pre-IVL an
         \label{fig:pca-clip}
         
     \end{subfigure}
-    \caption{PCA of the features output from initial weight of the model and the features learned by CLIP. CLIP pre-training gives more distinguishable features on the walls than those from the initial weight of the model. This can be the reason why CLIP pre-training improves the performance of the model.}
+    \caption{PCA of the features output from initial weight of the model and the features learned by CLIP. CLIP pre-training gives more distinguishable features on the walls than those from the initial weight of the model. 
+    % This can be the reason why CLIP pre-training improves the performance of the model.
+    }
 \end{figure}
 
 The co-registered dataset used in CLIP is Pre-IVL and Post-IVL. Therefore, similar experiment should be further studied on Pre-IVL and Post-Stent dataset. This is left for future work.
@@ -403,13 +409,22 @@ Genesis pre-training on unannotated OCT images yields $0.744\pm0.000$ Dice score
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_Genesis_results.png}
-    \caption{Dice score of Genesis on Calcium OCT dataset. In the parenthesis indicates the algorithms used for pre-training. Genesis is the pre-training on unannotated OCT images. Genesis significantly improves the performance of the 3D nnUNet model.}
+    \caption{Dice score of Genesis on Calcium OCT dataset. In the parenthesis indicates the algorithms used for pre-training. Genesis is the pre-training on unannotated OCT images. 
+    % Genesis significantly improves the performance of the 3D nnUNet model.
+    }
     \label{fig:genesis-results}    
 \end{figure}
 
 
 \section{Final Results}
 The results of the best model in each category are summarized in Figure~\ref{fig:results}. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/result_best_in_class_results.png}
+    \caption{Summary of the results. The best model in each category is illustrated. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.}
+    \label{fig:results}
+\end{figure}
 
 In SSL,
 V-JEPA pre-trained on unannotated OCT images is significantly lower than 2D nnUNet. As discussed in the previous section, the scale of the dataset may play an important role in transformer-based self-supervised learning.
@@ -421,13 +436,6 @@ Scaling up the size of the dataset and model parameters will not be advantageous
 This study does not serve to prove that nnUNet is better than transformers in general. It only shows that nnUNet is more suitable for calcium segmentation on OCT images with the current scale of the dataset and model parameters.
 
 Finally, the best model in our study is 2D nnUNet with an average Dice score of $0.753\pm0.006$. It is non trivial to note that 2D nnUNet does not benefit from pre-training on other datasets, as treating the dataset into 2D images is enough for the model to learn the features of the calcium plaques. However, the best 3D nnUNet is achieved by pre-training on LaW OCT dataset. It is equally vital to note that patch size of 3D nnUNet is crucial for the performance of the model. Reducing the patch size in the depth dimension augments the performance significantly, while providing more context in the width and height dimension does not improve the performance. This mirrors the nature of annotating the calcium plaques in OCT images. Calcium plaques are identified by their change in intensity around the artery walls. Therefore, x-y plane context does not provide additional information to the model. Similarly, calcium, more often than not, occurs between adjacent slices. There is no need for the model to have more context in the depth dimension.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=1\textwidth]{figures/result_best_in_class_results.png}
-    \caption{Summary of the results. The best model in each category is illustrated. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.}
-    \label{fig:results}
-\end{figure}
 
 \section{Discussion}
 \subsection{Scale Analysis}
