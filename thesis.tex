@@ -136,13 +136,13 @@ In recent years, generative tasks have now gained more attention in medical imag
 % This section is usually 5-10 pages.
 
 \section{Datasets}\label{sec:design:datasets}
-The main goal of this project is to study the effectiveness of self-supervised learning algorithms for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its own characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 3D OCT volumes in total annotated with calcium plaques. Lumen and Wall OCT (Dataset \ref{enum:lumen-and-wall-dataset}) is a dataset of 20 3D volumes annotated with lumen and wall. These two datasets are mutually exclusive. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment. Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes morphological properties of the calcium plaques, lumen and wall. This can be summarized as follows:
+The main goal of this project is to study the effectiveness of self-supervised learning algorithms for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 3D OCT volumes with calcium plaque annotation. Lumen and Wall OCT (Dataset \ref{enum:lumen-and-wall-dataset}) is a dataset of 20 3D volumes annotated with lumen and wall. These two datasets are mutually exclusive, meaning that the OCT images are not duplicated between them. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment. Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes the morphological properties of the calcium plaques, lumen, and wall. This can be summarized as follows:
 
 \begin{enumerate}
     \item Annotated datasets:
     \begin{enumerate}
         \item \label{enum:calcium-dataset} \textbf{Calcium OCT} is a dataset of coronary OCT images with calcium annotations before IVL.
-        \item \label{enum:lumen-and-wall-dataset} \textbf{Lumen and Wall OCT} is a dataset of coronary OCT images with lumen and wall annotations before IVL.
+        \item \label{enum:lumen-and-wall-dataset} \textbf{Lumen and Wall OCT (LaW OCT)} is a dataset of coronary OCT images with lumen and wall annotations before IVL.
     \end{enumerate}
     \item \label{enum:unannotated-dataset} Unannotated datasets:
     \begin{enumerate}
@@ -152,42 +152,63 @@ The main goal of this project is to study the effectiveness of self-supervised l
     \end{enumerate}
 \end{enumerate}
 
-Each dataset has its own purpose in this study. Calcium OCT is used for evaluating effectiveness of each algorithm on calcium segmentation. On the other hand, Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
+Each dataset has its purpose in this study. Calcium OCT is used for evaluating the effectiveness of each algorithm on calcium segmentation. On the other hand, Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
 
-In Calcium OCT, only 1 class is annotated, calcium. The size of each image is $500\times 500$ while the depth varies from $375$ to $539$. An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. In the training volumes, they are split into 3 folds of training and validation sets. In each fold, the model can be train using the training set, while the best model can be selected using the validation set. Subsequently, all models trained on each fold can be evaluated on the testing set that has not been seen during training. Eventually, the performace on the testing set can be averaged to get the final performace. This is done to ensure the robust evaluation of the models.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/fig_datasets_calcium_oct_sample.pdf}
-    \caption{An example of annotated image in Calcium OCT dataset.}
-    \label{fig:calcium-oct}
+\begin{figure}[hbt]
+    % \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{figures/fig_datasets_calcium_oct_sample.pdf}
+        \caption{An example of an annotated image in Calcium OCT dataset.}
+        \label{fig:calcium-oct}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{figures/fig_datasets_law_oct_sample.pdf}
+        \caption{An example of an annotated image from the Lumen and Wall OCT dataset.}
+        \label{fig:lumen-and-wall-oct}
+    \end{subfigure}
+    \caption{For each image, the first row displays the original image in three axes, while the bottom row presents the segmentation mask for the corresponding views.}
+    \label{fig:enter-label}
 \end{figure}
 
-Lumen and Wall OCT has 2 classes, lumen and wall, and is split into 16 training volumes and 4 testing volumes. The size of each image is $500\times 500$ while the depth varies from $270$ to $540$. An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
+In Calcium OCT, only 1 class, calcium, is annotated. The size of each image is $500\times 500$ while the depth varies from $375$ to $539$. An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. The training volumes are divided into 3 folds of training and validation sets. In each fold, the model can be trained using the training set, while the best model can be selected using the validation set. Subsequently, all models trained on each fold can be evaluated on the testing set that has not been seen during training. Finally, the performance on the testing set can be averaged to get the final performance. This is done to ensure the robust evaluation of the models.
 
-\begin{figure}[ht]
+Lumen and Wall OCT has 2 classes, lumen, and wall, and is divided into 16 training volumes and 4 testing volumes. The size of each image is $500\times 500$ while the depth varies from $270$ to $540$. An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
+
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{figures/fig_datasets_calcium_oct_sample.pdf}
+%     \caption{An example of an annotated image in Calcium OCT dataset. The first row displays the original image in three axes, while the bottom row presents the segmentation mask for the corresponding views.}
+%     \label{fig:calcium-oct}
+% \end{figure}
+
+% \begin{figure}[hbt]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{figures/fig_datasets_law_oct_sample.pdf}
+%     \caption{An example of an annotated image from the Lumen and Wall OCT dataset. The first row displays the original image in three axes, while the bottom row presents the segmentation mask for the corresponding views}
+%     \label{fig:lumen-and-wall-oct}
+% \end{figure}
+
+The unannotated datasets are of size $500\times 500$. They are not split into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may split them into train and validation sets for hyperparameter tuning. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
+
+\begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/fig_datasets_law_oct_sample.pdf}
-    \caption{An example of annotated image in Lumen and Wall OCT dataset.}
-    \label{fig:lumen-and-wall-oct}
-\end{figure}
-
-The unannotated datasets are of size $500\times 500$. They are not splitted into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may split them into train and validation set for hyperparameter tuning. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/fig_datasets_unlabeled_oct_sample.pdf}
-    \caption{Samples of unannotated OCT images.}
+    \includegraphics[width=0.6\textwidth]{figures/fig_datasets_unlabeled_oct_sample.pdf}
+    \caption{Samples of unannotated OCT images. The left column is Pre-IVL, the middle column is Post-IVL, and the right column is Post-Stent OCT modality.}
     \label{fig:unannotated-oct}
 \end{figure}
+
+\newpage
 \section{Algorithms}
 \subsection{CNN-based Supervised Learning - nnUNet}\label{sec:design:nnunet}
-nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. First, the data fingerprint must be introduced, specifying number of image modalities, how should the algorithm normalize each modality and the number of segmentation classes and regions. Additional information about data including intensity ranges, spacing, shape, and resolution are derived from the data metadata themselves. With this fingerprint, nnUNet automatically decides the network topology, sampling strategy, batch size and patch size. It is also worth noting that nnUNet provides a supervised pre-training pipeline for the model to be trained on other datasets before fine-tuning on the target dataset.
+nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. First, the data fingerprint must be introduced, specifying the number of image modalities, how the algorithm should normalize each modality, and the number of segmentation classes and regions. Additional information about data, including intensity ranges, spacing, shape, and resolution, is derived from the data metadata themselves. With this fingerprint, nnUNet automatically decides the network topology, sampling strategy, batch size, and patch size. It is also worth noting that nnUNet provides a supervised pre-training pipeline for the model to be trained on other datasets before fine-tuning on the target dataset.
 
-To apply the algorithm to our datasets, we designed two approaches. The first approach is to directly train the model on Calcium OCT. In addition to the former approach, on the second approach, we also pre-train the model on Lumen and Wall OCT before fine-tuning on Calcium OCT. 
+To apply the algorithm to our datasets, we designed two approaches. The first approach is to directly train the model on Calcium OCT. In the second approach, we pre-train the model on Lumen and Wall OCT before fine-tuning on Calcium OCT. 
 
 % Discuss 2D and 3D nnUNet for segmentation
-nnUNet provides both 2D- and 3D-segmentation architectures as well as a cascade 3D architecture of full resolution and low resolution networks. In our initial experiments, we find that 2D and 3D architecture are performing better than the cascade architecture. This leads us to subsequently only use 2D and 3D architectures for the rest of the experiments.
+nnUNet provides both 2D- and 3D-segmentation architectures as well as a cascade 3D architecture of full resolution and low-resolution networks. In our initial experiments, we find that 2D and 3D architectures are performing better than the cascade architecture. This leads us to subsequently only use 2D and 3D architectures for the rest of the experiments.
 
 % TODO: add a photo of nnUNet pipeline
 
