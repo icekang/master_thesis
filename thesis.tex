@@ -329,53 +329,52 @@ Consequently, we applied these two configurations to the main task of matching c
 % experiments showcase the individual points you want to prove.
 
 % This section is usually 5-10 pages.
-We evaluate the effectiveness of self-supervised learning algorithms on calcium segmentation on coronary OCT images. All the models, pre-trained or not, are fine-tuned on Calcium OCT dataset for 3 folds with validation set to select the best model. The models are then evaluated on the testing set. The performance is measured using Dice score, a common metric for segmentation tasks, which is defined as follows:
+We evaluated the effectiveness of self-supervised learning algorithms on calcium segmentation on coronary OCT images. All the models, pre-trained or not, were fine-tuned on the Calcium OCT dataset using the validation set to select the best model. We did this for 3 folds. The models were then evaluated on the testing set. The performance was measured using the Dice score, a common metric for segmentation tasks. It is defined as follows:
 
 \begin{equation}
     \text{Dice} = \frac{2 \times \text{TP}}{2 \times \text{TP} + \text{FP} + \text{FN}}
 \end{equation}
 
-where TP, FP, and FN are true positive, false positive, and false negative, respectively. The Dice score ranges from 0 to 1, where 1 indicates perfect segmentation. Dice score is calculated for each patient in the testing set, and the average Dice score is reported as the final performance of the model for each fold. The final performance is the average of the Dice scores of all folds.
+where TP, FP, and FN are true positive, false positive, and false negative, respectively. The Dice score ranges from 0 to 1, where 1 indicates perfect segmentation. The Dice score was calculated for each patient in the testing set, and the average Dice score was reported as the final performance of the model for each fold. The final performance is the average of the Dice scores of all folds.
 
-\section{nnUNet}
-Performance of nnUNet experiments on Calcium OCT dataset is summarized in Figure~\ref{fig:nnunet-results}. We find that default configuration of 3D nnUNet is significant lower than 2D nnUNet. To investigate further, we find that reducing the patch size of 3D nnUNet from $112$ to $32$ improves the performance significantly. This could be due to the fact that smaller depth allows the model to have more examples to learn from. In addition, comparing the patch size of $512\times 512\times 32$ and $160\times 128\times 32$ on 3D nnUNet, we can conclude that increase the patch size in the width and height dimension does not improve the performance as much. This may be due to the nature of calcium plaques in OCT images which are localized. Thus, increasing the context in the width and height dimension does not provide additional information to the model. 
+\section{nnUNet}\label{sec:result:nnunet}
+The Dice score of the default configuration of 3D nnUNet is significantly lower than that of the 2D nnUNet. By reducing the depth of the patch size of the 3D nnUNet from $112$ to $32$, the performance increases significantly. This could result from the smaller depth allowing the model to have more examples to learn from. In addition, expanding the width and height of the patch size from $160\times 128$ to $512\times 512$ does not improve performance. This may be due to the nature of calcium plaques in OCT images, which are localized. Thus, increasing the context in the width and height dimensions does not provide additional information to the model. The performance of the nnUNet on the Calcium OCT dataset is summarized in Figure~\ref{fig:nnunet-results}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/result_nnunet_results.png}
-    \caption{Dice score of variations of nnUNet. Results are groups according to the patch size used in training. Results in hashes indicate supervised pre-training on lumen and wall dataset (LaW OCT). 
-    % The one-sided paired t-test is done between with and without supervised pre-training. It is also done between the best 2D nnUNet model and supervised pre-trained 3D nnUNet model. Lastly, the test is done between supervised pre-trained 3D nnUNet models.
+    \caption{Dice score of variations of nnUNet. Results are grouped according to the patch size used in training. Results in hashes indicate supervised pre-training on the lumen and wall dataset (LaW OCT). 
+    % The one-sided paired t-test is done between with and without supervised pre-training. It is also done between the best 2D nnUNet model and the supervised pre-trained 3D nnUNet model. Lastly, the test is done between supervised pre-trained 3D nnUNet models.
     }
     \label{fig:nnunet-results}
 \end{figure}
 
-Additionally, pre-training the models with LaW OCT data set before fine-tuning on Calcium OCT significantly improves the 3D performance of models with their patch sizes reduced. Generally, calcium plaques around artery walls, so this pre-training allows the model to learn the features of the walls which can be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model.
+Additionally, pre-training the models with the lumen and wall dataset (LaW OCT) before fine-tuning them on the Calcium OCT significantly improves the 3D performance of the models when their patch sizes are reduced. Calcium plaques are typically located around the periphery of artery walls. Hence, this pre-training allows the model to learn the features of the walls, which may be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model.
 
 \section{SuPreM}
-We evaluated 3 settings of SuPreM's SwinUNTER model, as described in Section~\ref{sec:design:suprem}. The results are summarized in Figure~\ref{fig:suprem-results}. We find that SuPreM pre-training on SwinUNTER yields the best results with an average Dice score of $0.631\pm0.030$ which is statistically greater than the other two settings. This shows the effectiveness of SuPreM pre-training provides better features for image segmentation than self-supervised learning and no pre-training. The result is summarized in Figure~\ref{fig:suprem-results}.
+We evaluated three configurations of the SwinUNTER model, as described in Section~\ref{sec:design:suprem}. Our findings indicate that SuPreM pre-training on SwinUNTER yields the best results with an average Dice score of $0.631\pm0.030$. This score is statistically higher than those of the other two configurations. SuPreM pre-training provides superior features for calcium segmentation compared to self-supervised learning and training from scratch. The results are summarized in Figure~\ref{fig:suprem-results}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.5\linewidth]{figures/result_SwinUNETR_results.png}
-    \caption{Dice score of SuPreM's SwinUNTER model. In the parenthesis indicate pre-training algorithms. SuPreM pre-training on SwinUNTER yields the best results and is significantly better than both self-supervised pre-training and training it from scratch.}
+    \caption{Dice score of SuPreM's SwinUNTER model. In the parenthesis indicate pre-training algorithms. SuPreM pre-training on SwinUNTER yields the best results and is significantly better than both self-supervised pre-training and training from scratch.}
     \label{fig:suprem-results}
-
 \end{figure}
 
-However, comparing the results of SuPreM's SwinUNTER model with the best 2D nnUNet model, we find that the 2D nnUNet model outperforms the SuPreM's SwinUNTER model (Figure~\ref{fig:transformer-results}). We will discuss this the next section.
+However, when comparing the result of the SuPreM pre-trained SwinUNTER model with that of the best 2D nnUNet model, the 2D nnUNet model outperforms the SuPreM model (see Figure~\ref{fig:transformer-results}). This will be discussed in the following section.
 
 \section{Transformers-based Models}
-Effectiveness of the SegFormer, RADIO, and SwinUNTER pre-trained with SuPreM compared to nnUNet is summarized in Figure~\ref{fig:transformer-results}. We find that the best 3D nnUNet model all outperforms the transformer-based models. This effect could be fundamental differences between CNN and transformer architectures. CNNs are designed to learn local features while transformers are designed to learn global features. Calcium plaques in OCT images are localized, so CNNs are more suitable for this task. This is also supported by the fact that increasing the patch size in width and height dimension of 3D nnUNet does not improve the performance, while reducing the patch size in the depth dimension significantly improves the performance.
+We find that the best 3D nnUNet model outperforms all transformer-based models. This may be attributed to fundamental differences between CNN and transformer architectures. CNNs are designed to learn local features, while transformers are designed to learn global features. Calcium plaques in OCT images are localized, making CNNs more suitable for this task. This is also supported by the fact that, in CNNs, increasing the patch size in the width and height dimensions of the 3D nnUNet does not improve performance, while reducing the patch size in the depth dimension significantly improves performance (see Section~\ref{sec:result:nnunet}). The effectiveness of the SegFormer, ViT (RADIO), and SwinUNTER (SuPreM) compared to the nnUNet is summarized in Figure~\ref{fig:transformer-results}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.6\linewidth]{figures/result_nnUNet_vs_Transformer_results.png}
-    \caption{Dice score of transformer-based models compared to nnUNet. Compared to the best 3D nnUNet model pre-trained on LaW OCT dataset, Dice scores of transformer-based models are statistically significantly lower.}
+    \caption{Dice scores of transformer-based models compared to those of the nnUNet. Compared to the best 3D nnUNet model pre-trained on the LaW OCT dataset, Dice scores of transformer-based models are statistically significantly lower.}
     \label{fig:transformer-results}
 \end{figure}
 
 \section{V-JEPA}
-Performace of different decoder heads is summarized in Figure~\ref{fig:vjepa-decoder-results}. Each experiment is denoted by its architecture and its decoder head. In parenthesis indicates V-JEPA pre-trained on which dataset. The control experiment is ViT + Attentive* which is only ViT model with attentive decoder head and intensive data augmentation and positive data sampling rate without V-JEPA pre-training.
+The performance of different decoder heads is summarized in Figure~\ref{fig:vjepa-decoder-results}. Each experiment is denoted by its architecture and its decoder head. In parenthesis indicates V-JEPA pre-trained on which dataset. The control experiment is ViT + Attentive* which is only ViT model with attentive decoder head and intensive data augmentation and positive data sampling rate without V-JEPA pre-training.
 
 There is no statistically significant difference between different decoder heads. However, it can be concluded that the representation learned by V-JEPA on 2M natural videos, named \textbf{ViT + Attentive* (V-JEPA VideoMix2M)}, statistically significantly improves the performance of the ViT model on calcium segmentation, named \textbf{ViT + Attentive*}.
 
