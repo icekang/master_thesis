@@ -374,39 +374,39 @@ We find that the best 3D nnUNet model outperforms all transformer-based models. 
 \end{figure}
 
 \section{V-JEPA}
-The performance of different decoder heads is summarized in Figure~\ref{fig:vjepa-decoder-results}. Each experiment is denoted by its architecture and its decoder head. In parenthesis indicates V-JEPA pre-trained on which dataset. The control experiment is ViT + Attentive* which is only ViT model with attentive decoder head and intensive data augmentation and positive data sampling rate without V-JEPA pre-training.
+Each experiment is denoted by its architecture and its decoder head. The dataset V-JEPA was pre-trained on is indicated in the parenthesis. The control experiment, \textbf{ViT + Attentive*}, is the ViT model followed by an attentive decoder head, with intensive data augmentation and positive data sampling, but without V-JEPA pre-training. The results of different decoder heads are summarized in Figure~\ref{fig:vjepa-decoder-results}.
 
-There is no statistically significant difference between different decoder heads. However, it can be concluded that the representation learned by V-JEPA on 2M natural videos, named \textbf{ViT + Attentive* (V-JEPA VideoMix2M)}, statistically significantly improves the performance of the ViT model on calcium segmentation, named \textbf{ViT + Attentive*}.
+There is no significant difference between the various decoder heads. However, the representation learned by V-JEPA on VideoMix2M, namely \textbf{ViT + Attentive* (V-JEPA VideoMix2M)}, significantly improves the performance of the ViT model on calcium segmentation (\textbf{ViT + Attentive*}). This highlights the usefulness of V-JEPA pre-training.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/result_VJEPA_results.png}
-    \caption{Dice score of V-JEPA's decoder head. BNLinear is batch normalization followed by linear projection. Attentive signifies the attentive decoder head. Attentive* means attentive decoder head with more intensed data augmentation and positive data sampling rate. MultiFeat connotes the multi-features decoder head. In the parenthesis indicates the algorithm and the data used for pre-training.}
+    \caption{Dice score of V-JEPA's decoder head. BNLinear denotes batch normalization followed by linear projection. Attentive signifies the attentive decoder head. Attentive* indicates an attentive decoder head with more intensive data augmentation and positive data sampling. MultiFeat denotes the multi-features decoder head. The dataset V-JEPA was pre-trained on is indicated in the parenthesis.}
     \label{fig:vjepa-decoder-results}
 \end{figure}
 
-Besides V-JEPA pre-trained on VideoMix2M, we also evaluate V-JEPA pre-trained on unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on unannotated OCT images does not improve the performance of the ViT model on calcium segmentation. This is due to the magnitude of the dataset. Unannotated OCT images are only 300 volumes, while VideoMix2M contains 2M videos. This shows that the scale of the dataset is important for self-supervised learning on a transformer-based model.
+In addition to V-JEPA pre-trained on VideoMix2M, we also evaluated V-JEPA pre-trained on our unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on the unannotated OCT images did not improve the performance of the ViT model on calcium segmentation. This may be due to the size of the dataset. The unannotated OCT dataset consists of only 500 volumes, whereas VideoMix2M contains 2M videos. This demonstrates the importance of dataset scale for self-supervised learning on transformer-based models.
 
 \section{CLIP}
-Performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}. We find that CLIP pre-training on OCT images significantly improves the performance of the 3D nnUNet model. In addition, we fail to reject the null hypothesis that CLIP is statistically comparable to 3D nnUNet model pre-trained on LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on LaW OCT dataset while the cost for co-registration is lower than the cost for annotating lumen and wall.
+We find that CLIP pre-training on co-register OCT images significantly improves the performance of the 3D nnUNet model. In addition, CLIP is statistically comparable to the 3D nnUNet model pre-trained on the LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on the LaW OCT dataset, while the cost for co-registration is lower than the cost for annotating lumen and wall. The performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_CLIP_results.png}
-    \caption{Dice score of CLIP on Calcium OCT dataset compared to nnUNet. In the parenthesis indicates the algorithms used for pre-training. LaW OCT is the supervised pre-training on Lumen and Wall OCT dataset. CLIP is the pre-training on co-registered multi-modal OCT images.
+    \caption{Dice score of CLIP on Calcium OCT dataset compared to nnUNet. In the parenthesis indicates the algorithms used for pre-training. LaW OCT is the supervised pre-training on the Lumen and Wall OCT dataset. CLIP is the pre-training on co-registered multi-modal OCT images.
     %  Both supervised and CLIP pre-training significantly improves the performance of the 3D nnUNet model. They are statistically comparable to each other, and to the best 2D nnUNet model.
     }
     \label{fig:clip-results}
 \end{figure}
 
-The success of CLIP pre-training may come from the fact that aligning Pre-IVL and Post-IVL requires the model to learn the features of the lumen and wall which has been proven to be useful for calcium segmentation in nnUNet (LaW OCT). To prove this, we visualize the PCA of the features learned by CLIP compared to the features output from initial weight of the model. 
+The success of CLIP pre-training may result from the fact that aligning Pre-IVL and Post-IVL requires the model to learn the features of the lumen and wall, which has been proven to be useful for calcium segmentation in nnUNet (LaW OCT). To prove this, we visualize the PCA of the features learned by CLIP compared to the features output from the initial weight of the model. 
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/discussion_default_feature_map_batch0_feature1.png}
-        \caption{PCA of the features output from initial weight of the model.}
+        \caption{PCA of the output of the features from initial weight of the model.}
         \label{fig:pca-initial}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
@@ -416,43 +416,39 @@ The success of CLIP pre-training may come from the fact that aligning Pre-IVL an
         \label{fig:pca-clip}
         
     \end{subfigure}
-    \caption{PCA of the features output from initial weight of the model and the features learned by CLIP. CLIP pre-training gives more distinguishable features on the walls than those from the initial weight of the model. 
+    \caption{PCA of the output of the features from the initial weight of the model and the features learned by CLIP. CLIP pre-training gives more distinguishable features on the walls than those from the initial weight of the model. 
     % This can be the reason why CLIP pre-training improves the performance of the model.
     }
 \end{figure}
 
-The co-registered dataset used in CLIP is Pre-IVL and Post-IVL. Therefore, similar experiment should be further studied on Pre-IVL and Post-Stent dataset. This is left for future work.
+The dataset used in CLIP is co-registered Pre-IVL and Post-IVL. Therefore, the author suggests similar experiments be further studied on the co-registered Pre-IVL and Post-Stent dataset.
 
 \section{Genesis}
-Genesis pre-training on unannotated OCT images yields $0.744\pm0.000$ Dice score on Calcium OCT dataset. However, Genesis does not statistically significantly improves the performance of the 3D nnUNet model based on the one-sided paired t-test. Nevertheless, according to the two-sided paired t-test, we can conclude that Genesis has a comparable performance with pre-trained 3D nnUNet on LaW OCT as well as the best 2D nnUNet. The result and statistical tests are summarized in Figure~\ref{fig:genesis-results}.
+Pre-training Genesis on unanotated OCT images results in a Dice score of $0.744\pm0.000$ on the Calcium OCT dataset. Furthermore, Genesis significantly improves the performance of the 3D nnUNet model. Additionally, Genesis performs comparably to the best 2D nnUNet and the pre-trained 3D nnUNet on the LaW OCT dataset, while not requiring additional data annotations. The results and statistical tests are summarized in Figure~\ref{fig:genesis-results}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_Genesis_results.png}
-    \caption{Dice score of Genesis on Calcium OCT dataset. In the parenthesis indicates the algorithms used for pre-training. Genesis is the pre-training on unannotated OCT images. 
-    % Genesis significantly improves the performance of the 3D nnUNet model.
+    \caption{a Dice score of Genesis on the Calcium OCT dataset compared to those of nnUNets. The dataset used for pre-training is indicated in the parenthesis.
     }
     \label{fig:genesis-results}    
 \end{figure}
 
 
 \section{Final Results}
-The results of the best model in each category are summarized in Figure~\ref{fig:results}. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.
+The models are grouped into three categories: SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. V-JEPA on unannotated OCT is categorized under SSL, whereas V-JEPA on VideoMix2M is under Transformer, as it was only fine-tuned to the Calcium OCT dataset. Each result is statistically compared to the 2D nnUNet model, which has the highest average Dice score in our study. The results of the best models in each category are summarized in Figure~\ref{fig:results}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=1\textwidth]{figures/result_best_in_class_results.png}
-    \caption{Summary of the results. The best model in each category is illustrated. They are grouped into 3 categories, SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. Each result is statistically tested again 2D nnUNet model who has the highest average Dice score in our study.}
+    \caption{Summary of the results. The best model in each category is illustrated. SSL denotes self-supervised learning models, Transformer denotes transformer-based models, and nnUNet denotes 2D and 3D CNN-based nnUNet models.}
     \label{fig:results}
 \end{figure}
 
-In SSL,
-V-JEPA pre-trained on unannotated OCT images is significantly lower than 2D nnUNet. As discussed in the previous section, the scale of the dataset may play an important role in transformer-based self-supervised learning.
-%TODO: wait for Genesis
-CLIP pre-training on co-registered multi-modal OCT images is statisti.cally comparable to 2D nnUNet model. Additionally, it is comparable to 3D nnUNet model pre-trained on LaW OCT dataset. This shows that CLIP can be equally effective as supervised pre-training while costing less for annotation.
+In the SSL category, V-JEPA pre-trained on unannotated OCT images performs significantly worse than 2D nnUNet. As discussed in the previous section, the scale of the dataset may play an important role in transformer-based self-supervised learning. Genesis pre-training on unannotated OCT images also performs significantly worse than the 2D nnUNet. However, it performs comparably to the best 3D nnUNet pre-trained on the LaW OCT dataset. Although it is not comparable to the best-performing model, it is as effective as supervised pre-training while not requiring additional annotations. CLIP pre-training on co-registered multi-modal OCT images performs comparably to the 2D nnUNet model. Additionally, it performs comparably to the 3D nnUNet model pre-trained on the LaW OCT dataset. This demonstrates that CLIP can be as effective as supervised pre-training while being less costly in terms of annotation.
 
-From our experiments, transformer-based models' Dice scores are significantly less than 2D nnUNet's. Transformer provides attention mechanism that allows the model to combine features from different parts of the image. In contrast, CNNs' kernels are designed to learn local features. Since calcium plaques generally lie around the artery walls, CNNs are more suitable for this task. In addition, the scale of the dataset may play an important role. nnUNet is designed for small- to medium-sized medical datasets.
-Scaling up the size of the dataset and model parameters will not be advantageous for CNNs when these two magnitudes reach a certain point. On the contrary, transformers benefit from scaling. % TODO: paper to support this
+From our experiments, transformer-based models' Dice scores are significantly less than 2D nnUNet's. Transformer provides a self-attention mechanism that allows the model to combine features from different parts of the image. In contrast, CNNs' kernels are designed to learn local features. Since calcium plaques are typically located around the artery walls, CNNs are more suitable for this task. In addition, the scale of the dataset may play an important role. nnUNet is designed for small- to medium-sized medical datasets.
+Scaling up the size of the dataset and model parameters will not be advantageous for CNNs when these two magnitudes reach a certain point. On the contrary, transformers benefit from scaling~\cite{Zhai2021}.
 This study does not serve to prove that nnUNet is better than transformers in general. It only shows that nnUNet is more suitable for calcium segmentation on OCT images with the current scale of the dataset and model parameters.
 
 Finally, the best model in our study is 2D nnUNet with an average Dice score of $0.753\pm0.006$. It is non trivial to note that 2D nnUNet does not benefit from pre-training on other datasets, as treating the dataset into 2D images is enough for the model to learn the features of the calcium plaques. However, the best 3D nnUNet is achieved by pre-training on LaW OCT dataset. It is equally vital to note that patch size of 3D nnUNet is crucial for the performance of the model. Reducing the patch size in the depth dimension augments the performance significantly, while providing more context in the width and height dimension does not improve the performance. This mirrors the nature of annotating the calcium plaques in OCT images. Calcium plaques are identified by their change in intensity around the artery walls. Therefore, x-y plane context does not provide additional information to the model. Similarly, calcium, more often than not, occurs between adjacent slices. There is no need for the model to have more context in the depth dimension.
@@ -604,7 +600,7 @@ In recent years, discriminative and generative tasks have been proposed as pre-t
 
 In contrast to contrastive learning, masked autoencoding (MAE) learns representations by generating pixel values of the masked out parts of images, honing similar spirit to masked language modeling (MLM)~\cite{Devlin2019} in NLP. It has been preliminarily explored on vision transformer (ViT) model at the same time the architecture has been proposed~\cite{Dosovitskiy2020vit}. However, the performace of masked autoencoding in the original paper is not as good as supervised learning. To make this works, He et al.~\cite{He2022} propose masking out 75\% of an image rather than 50\% experimented previously. Furthermore, an asymmetric encoder-decoder architecture of MAE is introduced. An encoder operates only on the visible pixels and a light weight decoder operates on the encoded tokens as well as the mask tokens presented afterwards. Compared to CL, batch size, data augmentation and number of negative samples are not as critical for MAE, rendering it more scalable. MAE outperforms supervised learning and supervised pre-training on ImageNet using the same architecture ViT. Additionally, MAE has been evaluated on segmentic segmentation on ADE20k~\cite{Zhou2018}, highlighting that it can be used for dense prediction downstream tasks as well. Nonetheless, working at a pixel level, MAE is computationally expensive compared to CL.
 
-In a manner similar to MAE, bidirectional encoder for image transformer (BEiT) first learns image patch tokenizer and predicts the tokenized values of the mask tokens instead of the pixel values as in MAE~\cite{Bao2022beit}. BEiT has been shown to outperform supervised learning and supervised pre-training on ImageNet~\cite{Russakovsky2015}. It has also been evaluated on segmentic segmentation on ADE20k achieving state-of-the-art performace at that time. As BEiT requires tokenizer to be learned, it adds more complexity to the pre-text task compared to MAE. Combining restorative and discriminative pre-text tasks, DINOv2~\cite{Oquab2024dinov} proposes to learn representations by predicting the tokenized values of the mask tokens as well as matching the class tokens of teacher and student networks on different crops of the same image. This approach has been shown to outperform other image SSLs at the time. Performing representation learning at the token level allows DINOv2 to be more efficient than pixel-level SSLs. In addition, I-JEPA~\cite{Assran2023} adapts this idea one step further. Attempting to find the most efficient approach to learn feature representations, I-JEPA proposes to predict directly the encoded vectors of mask tokens instead of the tokenized values. Evaluated on image classification, I-JEPA has shown to be comparable to other SSLs while being simpler and more efficient. 
+Like MAE, bidirectional encoder for image transformer (BEiT) first learns image patch tokenizer and predicts the tokenized values of the mask tokens instead of the pixel values as in MAE~\cite{Bao2022beit}. BEiT has been shown to outperform supervised learning and supervised pre-training on ImageNet~\cite{Russakovsky2015}. It has also been evaluated on segmentic segmentation on ADE20k achieving state-of-the-art performace at that time. As BEiT requires tokenizer to be learned, it adds more complexity to the pre-text task compared to MAE. Combining restorative and discriminative pre-text tasks, DINOv2~\cite{Oquab2024dinov} proposes to learn representations by predicting the tokenized values of the mask tokens as well as matching the class tokens of teacher and student networks on different crops of the same image. This approach has been shown to outperform other image SSLs at the time. Performing representation learning at the token level allows DINOv2 to be more efficient than pixel-level SSLs. In addition, I-JEPA~\cite{Assran2023} adapts this idea one step further. Attempting to find the most efficient approach to learn feature representations, I-JEPA proposes to predict directly the encoded vectors of mask tokens instead of the tokenized values. Evaluated on image classification, I-JEPA has shown to be comparable to other SSLs while being simpler and more efficient. 
 
 While reading texts provides a natural way to learn natural languages, visual representations are not limited to static 2D images. Striving to incorporate a temporal dimension, extensions of existing visual SSLs have been made. VideoMAE introduces tube masking to MAE~\cite{He2022} along with an extremely high masking ratio of 90\% to 90\%~\cite{Tong2022VideoMAE}. Without external data, VideoMAE demonstrates its understanding of the video achieving state-of-the-art results to supervised learning on Kinetics-400~\cite{Kay2017Kinetics} and Something-Something V2~\cite{Goyal2017Something-SomethingV2}. Generating pixel values on video imposes even more computational limitation, as one cannot efficiently fit a clip of a video with a large number of frames. V-JEPA extends from I-JEPA~\cite{Assran2023}, predicting the encoded vectors of mask tokens on video~\cite{Bardes2024Vjepa}. As JEPA is more efficient than MAE, V-JEPA is a more efficient approach to learn representations on video. Additionally, V-JEPA has been shown to outperform VideoMAE. These ideas have potential to be applied to 3D medical images, replacing temporal axis with depth axis.
 
@@ -642,7 +638,7 @@ Taking a different approach, RADIO proposes to learn representations from alread
 \chapter{Conclusion}
 %%%%%%%%%%%%%%%%%%%%
 
-In the conclusion you repeat the main result and finalize the discussion of
+In the conclusion, you repeat the main result and finalize the discussion of
 your project. Mention the core results and why as well as how your system
 advances the status quo.
 
