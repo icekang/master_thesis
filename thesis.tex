@@ -388,7 +388,7 @@ There is no significant difference between the various decoder heads. However, t
 In addition to V-JEPA pre-trained on VideoMix2M, we also evaluated V-JEPA pre-trained on our unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on the unannotated OCT images did not improve the performance of the ViT model on calcium segmentation. This may be due to the size of the dataset. The unannotated OCT dataset consists of only 500 volumes, whereas VideoMix2M contains 2M videos. This demonstrates the importance of dataset scale for self-supervised learning on transformer-based models.
 
 \section{CLIP}
-We find that CLIP pre-training on co-register OCT images significantly improves the performance of the 3D nnUNet model. In addition, CLIP is statistically comparable to the 3D nnUNet model pre-trained on the LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on the LaW OCT dataset, while the cost for co-registration is lower than the cost for annotating lumen and wall. The performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}.
+We find that CLIP pre-training on co-registered OCT images significantly improves the performance of the 3D nnUNet model. In addition, CLIP is statistically comparable to the 3D nnUNet model pre-trained on the LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on the LaW OCT dataset, while the cost for co-registration is lower than the cost for annotating lumen and wall. The performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}.
 
 \begin{figure}[h]
     \centering
