@@ -349,7 +349,24 @@ The Dice score of the default configuration of 3D nnUNet is significantly lower 
     \label{fig:nnunet-results}
 \end{figure}
 
-Additionally, pre-training the models with the lumen and wall dataset (LaW OCT) before fine-tuning them on the Calcium OCT significantly improves the 3D performance of the models when their patch sizes are reduced. Calcium plaques are typically located around the periphery of artery walls. Hence, this pre-training allows the model to learn the features of the walls, which may be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model.
+Additionally, pre-training the models with the lumen and wall dataset (LaW OCT) before fine-tuning them on the Calcium OCT significantly improves the 3D performance of the models when their patch sizes are reduced. Calcium plaques are typically located around the periphery of artery walls. Therefore, this pre-training allows the model to learn the features of the walls, which may be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model. As the 2D nnUNet has a better Dice score than the 3D nnUNet, the question arises: Is 3D segmentation necessary, or should we only study 2D segmentation models?
+
+The answer depends on the use cases of the resulting segmentation. In our research, we place greater emphasis on the continuity of the segmentation, as one of the use cases is to reconstruct a 3D digital twin of the image. Consequently, we analyzed the correctness and consistency of the 2D and 3D nnUNet. To add more variety to the consistency analysis, we examined the validation images of each fold rather than the testing images. First, we defined continuity to be the inverse of changes between adjacent segmentation slices. The mathematical definition is as follows.
+
+\begin{equation}
+\text{Continuity} = \left(\frac{1}{M\times (N - 1)}\sum_{i = 1}^{M}\sum_{j = 1}^{N-1} \left| I_{j}^{i} - I_{j+1}^{i}\right|\right)^{-1}
+\end{equation}
+
+where $M$ is the number of validation images and $N$ is the number of slices per volume. $I_{j}^{i}$ denotes a segmentation mask of the $j$th slice at the $i$th volume. Using this definition, we tracked the Dice scores of the validation images while progressively applying morphological operations -- first opening and then closing -- to enhance segmentation continuity. To enhance continuity, we applied different kernel shapes and sizes. The kernels included 3D spheres and ellipsoids. In ellipsoids, the semi-axis in the depth dimension is greater than the others, as discontinuity was likely to occur. The result is illustrated in Figure~\ref{fig:nnunet-continuity-vs-correctness}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/result_nnunet_dice_and_continuity.png}
+    \caption{A plot showing the relationship between Dice scores and continuity as smoothing is increasingly applied. Original denotes the initial segmentation, while the others indicate the kernel shape and size used in smoothing. The size is denoted in $W\times H\times D$ notation.}
+    \label{fig:nnunet-continuity-vs-correctness}
+\end{figure}
+
+As the kernel shape and size change, the segmentation becomes more continuous at the expense of a decrement in the Dice score. The trade-off varies across models, with the 3D nnUNet better retaining the performance while providing better continuity. 
 
 \section{SuPreM}
 We evaluated three configurations of the SwinUNTER model, as described in Section~\ref{sec:design:suprem}. Our findings indicate that SuPreM pre-training on SwinUNTER yields the best results with an average Dice score of $0.631\pm0.030$. This score is statistically higher than those of the other two configurations. SuPreM pre-training provides superior features for calcium segmentation compared to self-supervised learning and training from scratch. The results are summarized in Figure~\ref{fig:suprem-results}.
@@ -452,7 +469,7 @@ The best model in our study is 2D nnUNet, which achieved an average Dice score o
 
 \section{Discussion}
 \subsection{Scale Analysis}
-We do an initial study on the scale of the dataset used to train the model and its effect on the performance of the model. We subsample the training set of the Calcium OCT dataset to 33\% (1 training image and 1 validation image) and 66\% (3 training and 1 validation) of the original size. As shown in Figure~\ref{fig:scale-analysis}, the supervised pre-training on the LaW OCT dataset is shown to be more reliable than self-supervised learning on a smaller dataset as it yields a lower standard deviation of dice score while the average dice score is higher. CLIP, on the other hand, is shown to be more affected in the lowest scale of the dataset. It has a lower average dice score and a higher standard deviation of dice score. 
+We conducted an initial study on the scale of the dataset used to train the model and its effect on model performance. We subsampled the Calcium OCT dataset to 33\% (one training image and one validation image) and 66\% (three training images and one validation image) of the original size. As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher average Dice score. Conversely, CLIP is more affected at the smallest scale of the dataset, exhibiting a lower average Dice score and a higher standard deviation. 
 
 \begin{figure}[hbt]
     \centering
@@ -461,10 +478,10 @@ We do an initial study on the scale of the dataset used to train the model and i
     \label{fig:scale-analysis}
 \end{figure}
 
-We hypothesize 2 possible scenarios. One is that 8 volumes with 4 training, 2 validation, and 2 testing volumes are already in a low data regime, making them lower as we study then does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low data regime. The other is that CLIP features are not as effective as supervised pre-training features as CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns the features of the lumen and wall. This leads to more data needed for CLIP to translate the implicit features to the explicit features as we see CLIP thrive as the scale of the dataset increases. We recommend more studies be done on the scale of the dataset as this study is only preliminary and may not be conclusive.
+We hypothesize two possible scenarios. One scenario is that eight volumes, with four training, two validation, and two testing volumes, are already in a low data regime.  Further studying them does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low-data regimes. The other scenario is that CLIP features are not as effective as supervised pre-training features. CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns those features. This leads to more data being needed for CLIP to translate the implicit features into the explicit features, as we see CLIP thrive as the scale of the dataset increases. We recommend conducting more studies on the scale of the dataset, as this study is only preliminary and may not be conclusive.
 
 \subsection{Visually Good Features}
-Visually good features do not always lead to a better performance as the distinction of the most important weighs more than the aesthetics of the features. We visualize the features from V-JEPA (VideoMix2M) and its initial weight. Shown in Figure~\ref{fig:visually-good-features}, both retain the structure of the artery walls. However, the features from V-JEPA (VideoMix2M) put the background into the same cluster and give more distinction to the artery walls. This can be the reason why V-JEPA (VideoMix2M) improves the performance of the model. While the features from the initial weight of the model keep the original structure and the structure of the artery walls is visible to human eyes, a close look into the color of the features shows that the artery walls are not as distinguishable from the background or any other structures as they are blended into a gradient of colors. What might be deceivingly good features to human eyes may not be the best features for the model to learn from.
+Visually good features do not always lead to better performance, as the distinction of the most important features weighs more than their aesthetics. We visualize the features from V-JEPA (VideoMix2M) and the features from the ViT initial weights. Shown in Figure~\ref{fig:visually-good-features}, both retain the structure of the artery walls. However, the features from V-JEPA (VideoMix2M) put the background into the same cluster and give more distinction to the artery walls. This may explain why V-JEPA (VideoMix2M) improves the model's performance. While the features from the initial weights of the model retain the original structure and the artery walls are visible to the human eye, a closer look at the color of the features shows that the artery walls are not as distinguishable from the background or other structures, as they blend into a gradient of colors. Features that appear good to human eyes may not be the best for the model to learn from.
 
 \begin{figure}[hbt]
     \centering
@@ -483,21 +500,21 @@ Visually good features do not always lead to a better performance as the distinc
         \includegraphics[width=0.9\linewidth]{figures/discussion_visual_vjepa_pretrained.jpg}
         \caption{PCA feature from ViT with V-JEPA pre-trained weight}
     \end{subfigure}
-    \caption{PCA of the output of the features from the initial weight of the model and the features learned by V-JEPA. A volume is unrolled along the depth dimension.}
+    \caption{PCA of the output features from the initial weight of the model and the features learned by V-JEPA. The volume is unrolled along the depth dimension.}
     \label{fig:visually-good-features}
 \end{figure}
 
-Visualizing ViT (RADIO) also supports this hypothesis. Shown in Figure~\ref{fig:radio-features}, features from ViT (RADIO) are humanly interpretable as they can successfully distinguish OCT image semantics. The border between the background and where the waves could travel is visible. However, the features on the artery walls are not as distinct. This can be the reason why ViT (RADIO) does not perform well in terms of Dice score.
+Visualizing ViT (RADIO) features also supports this hypothesis. Shown in Figure~\ref{fig:radio-features}, features from ViT (RADIO) are humanly interpretable, as they can successfully distinguish OCT image semantics. The border between the background and the regions where the waves could travel is visible. However, the features of the artery walls are not as distinct. This may explain why ViT (RADIO) does not perform well in terms of Dice score.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.35\textwidth]{figures/discussion_radio_feature.png}
-    \caption{PCA of the features output from ViT (RADIO). The middle column is a PCA of the features with the first principal component kept. The right column is with the first principal component removed.}
+    \caption{PCA of the output features from ViT (RADIO). The middle column shows the PCA of the features with the first principal component kept. The right column shows the PCA with the first principal component removed.}
     \label{fig:radio-features}
 \end{figure}
 
 \subsection{V-JEPA Pre-training}
-Unlike Genesis, where loss and semantic checks of how the model is learning on the pre-text task can be determined easily, V-JEPA does not. We experiment with different configurations of V-JEPA pre-training on our unannotated OCT images. We face difficulty in converging the loss. As shown in Figure~\ref{fig:v-jepa-training}, the loss curve of ViT-L (V-JEPA Unannotated OCT) is converging, but it is sensitive to the configurations used.
+Unlike Genesis, where loss and semantic checks of the model's learning on the pre-text task can be easily determined, V-JEPA does not provide such clarity. We experimented with different configurations of V-JEPA pre-training on our unannotated OCT images. We faced difficulties in converging the loss. As shown in Figure~\ref{fig:v-jepa-training}, the loss curve of ViT-L (V-JEPA Unannotated OCT) is converging, but it is sensitive to the configurations used.
 
 \begin{figure}[hbt]
     \centering
@@ -516,30 +533,30 @@ Unlike Genesis, where loss and semantic checks of how the model is learning on t
         \includegraphics[width=0.9\linewidth]{figures/discussion_vjepa_training_3.png}
         \caption{ViT-L (V-JEPA Unannotated OCT) with more weight decay}
     \end{subfigure}
-    \caption{Different loss curves of V-JEPA pre-training on unannotated OCT images with different configurations.}
+    \caption{Loss curves of V-JEPA pre-training on unannotated OCT images with various configurations.}
     \label{fig:v-jepa-training}
 \end{figure}
 
-One way to determine V-JEPA convergence is to plot the hidden features from the target encoder and compare that to the context encoder. Illustrated in Figure~\ref{fig:v-jepa-prediction}, the pretraining can succeed in the V-JEPA pre-text task of predicting the hidden features of the masked-out parts of the video. In contrast to Genesis, or other pixel-level prediction pre-text tasks, it can not be easily determined if the prediction is correct. This is the trade-off of using V-JEPA which is more computationally efficient than MAE, but harder to determine if the model is learning the correct features.
+One way to determine V-JEPA convergence is to plot the hidden features from the target encoder and compare them to those from the context encoder. As illustrated in Figure~\ref{fig:v-jepa-prediction}, the pre-training can succeed in the V-JEPA pre-text task of predicting the hidden features of the masked-out parts of the video. In contrast to Genesis or other pixel-level prediction pre-text tasks, it cannot be easily determined if the prediction is correct since it is only an embedding vector. This is the trade-off of using V-JEPA: it is more computationally efficient than pixel-level pre-text tasks but makes it harder to determine if the model is learning correctly.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/discussion_vjepa_prediction.png}
-    \caption{Hidden features from target encoder and context encoder of ViT-L (V-JEPA Unannotated OCT) over training epochs. The bottom row shows different hidden features from the target encoder and context encoder in the last epoch.}
+    \caption{Hidden features from target encoder (blue) and context encoder of ViT (V-JEPA Unannotated OCT) (orange) over training epochs. The bottom row shows different hidden features from the target encoder and context encoder in the final epoch.}
     \label{fig:v-jepa-prediction}
 \end{figure}
 
 \subsection{CLIP Pre-training}\label{sec:results:discussion:clip}
-As mentioned in Section~\ref{sec:implementation:clip}, CLIP needs a shared encoder and projector for the pre-training to converge. In this section, we show the sanity check taken and the results for future works that may want to adapt CLIP to multi-modalities of OCT images.
+As mentioned in Section~\ref{sec:implementation:clip}, CLIP requires a shared encoder and projector for the pre-training to converge. In this section, we present the sanity checks performed and the results, providing insights for future works that may aim to adapt CLIP to multi-modalities of OCT images.
 
-We first do a sanity check of CLIP by training the model to match the same image with the same crop as shown in Figure~\ref{fig:clip-sanity-check-same-image}. This is a much simpler problem and its configuration that does not learn to match the same image will not be able to match co-registered multi-modal OCT images. We then train the model to match the Pre-IVL and Post-IVL images as shown in Figure~\ref{fig:clip-sanity-check-different-image}. This is the main task of CLIP. We find that only a shared encoder and projector can converge the losses down.
+We first performed a sanity check of CLIP by training the model to match the same images, as shown in Figure~\ref{fig:clip-sanity-check-same-image}. This is a much simpler problem, and configurations that cannot match the same image will not be able to match co-registered multi-modal OCT images. Next, we trained the model to match the Pre-IVL and Post-IVL images, as shown in Figure~\ref{fig:clip-sanity-check-different-image}. This is the main task of CLIP. We found that only a shared encoder and projector can effectively converge the losses.
 
 \begin{figure}[hbt]
     \centering
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{figures/discussion_clip_same_image.png}
-        \caption{Same image}
+        \caption{Same images}
         \label{fig:clip-sanity-check-same-image}
     \end{subfigure}%
     \begin{subfigure}[t]{0.3\textwidth}
@@ -565,16 +582,16 @@ We first do a sanity check of CLIP by training the model to match the same image
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{figures/discussion_clip_same_image_shared_enc_shared_proj_logits.png}
-        \caption{Co-similarity matrix of shared encoders and projectors on the different images.}
+        \caption{Co-similarity matrix of shared encoders and projectors on different modalities.}
         \label{fig:clip-cosimilarity-shared-enc-proj}
     \end{subfigure}
-    \caption{Sanity check of CLIP. The model is trained to match the same image and different crops of the same image.}
+    \caption{Sanity check of CLIP. The model is trained to match the same images.}
     \label{fig:clip-sanity-check}
 \end{figure}
 
-To determine whether the model is learning, we can plot a co-similarity matrix of the features output from the model. As shown in Figure~\ref{fig:clip-cosimilarity-diff-enc-proj}, using different encoders and projectors does not converge the losses down. In contrast, with a shared projector, the losses are converged down as shown in Figure~\ref{fig:clip-cosimilarity-same-enc-proj} using the same images. However, it does not converge the losses down when using different images. Only shared encoders and projectors can converge the losses down as shown in Figure~\ref{fig:clip-cosimilarity-shared-enc-proj} using different images.
+To determine whether the model is learning, we can plot a co-similarity matrix of the features output by the model. As shown in Figure~\ref{fig:clip-cosimilarity-diff-enc-proj}, when using different encoders and projectors, the loss did not converge, and the matrix did not resemble an identity matrix. In contrast, with a shared projector, the loss converged using the same images. The co-similarity matrix resembled an identity matrix, as shown in Figure~\ref{fig:clip-cosimilarity-same-enc-proj}. However, it did not converge when training on different image modalities. Only shared encoders and projectors could converge when training on different image modalities. Their co-similarity matrix appeared close to an identity matrix, as shown in Figure~\ref{fig:clip-cosimilarity-shared-enc-proj}.
 
-Unlike language and image, different modalities of OCT images are not as distinct. Thus, having to learn to align hidden features with different encoders and projectors may add noises during the initial training phase leading to the model not being able to converge the losses down. 
+Unlike language and image, different OCT image modalities are not as distinct. Thus, learning to align hidden features with different encoders and projectors may introduce noises during the initial training phase, preventing the model from converging. 
 %%%%%%%%%%%%%%%%%%%%%%
 \chapter{Related Work}
 %%%%%%%%%%%%%%%%%%%%%%
