@@ -469,16 +469,22 @@ The best model in our study is 2D nnUNet, which achieved an average Dice score o
 
 \section{Discussion}
 \subsection{Scale Analysis}
-We conducted an initial study on the scale of the dataset used to train the model and its effect on model performance. We subsampled the Calcium OCT dataset to 33\% (one training image and one validation image) and 66\% (three training images and one validation image) of the original size. As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher average Dice score. Conversely, CLIP is more affected at the smallest scale of the dataset, exhibiting a lower average Dice score and a higher standard deviation. 
+We conducted a study on the scale of the dataset used to train the model and its effect on model performance. We randomly subsampled 33\%, 50\%, 66\%, and 83\% of the Calcium OCT dataset while excluding the test set. Each sampled dataset was split into 75\% and 25\% for training and validation respectively. We then trained the model with the training set, while tracking the best model with the validation set. The final Dice score is calculated using the test set which remains the same across all scales and experiments.
+
+It is worth pointing out that, in the Calcium OCT dataset, the outcome of the model is highly sensitive to the selection of training data. This is unsurprising as the total size of the dataset is particularly small. This reflects on the standard deviation and the Dice score volatility, as the scale increases.
 
 \begin{figure}[hbt]
     \centering
-    \includegraphics[width=0.65\linewidth]{figures/discussion_scale_analysis.png}
+    \includegraphics[width=0.5\linewidth]{figures/discussion_scale_analysis.png}
     \caption{Dice score of 2D and 3D nnUNet on Calcium OCT dataset subsampled to 33\% and 66\% of the original size.}
     \label{fig:scale-analysis}
 \end{figure}
 
-We hypothesize two possible scenarios. One scenario is that eight volumes, with four training, two validation, and two testing volumes, are already in a low data regime.  Further studying them does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low-data regimes. The other scenario is that CLIP features are not as effective as supervised pre-training features. CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns those features. This leads to more data being needed for CLIP to translate the implicit features into the explicit features, as we see CLIP thrive as the scale of the dataset increases. We recommend conducting more studies on the scale of the dataset, as this study is only preliminary and may not be conclusive.
+As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher averaged Dice score. Conversely, CLIP is less effective than the supervised pre-training, yet it is more beneficial than not having any pre-training.
+
+% We hypothesize two possible scenarios. One scenario is that eight volumes, with four training, two validation, and two testing volumes, are already in a low data regime.  Further studying them does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low-data regimes. The other 
+One possible scenario is that CLIP features are not as effective as supervised pre-training features. CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns those features. This leads to more data being needed for CLIP to translate the implicit features into the explicit features, as we see CLIP thrive as the scale of the dataset increases. 
+% We recommend conducting more studies on the scale of the dataset, as this study is only preliminary and may not be conclusive.
 
 \subsection{Visually Good Features}
 Visually good features do not always lead to better performance, as the distinction of the most important features weighs more than their aesthetics. We visualize the features from V-JEPA (VideoMix2M) and the features from the ViT initial weights. Shown in Figure~\ref{fig:visually-good-features}, both retain the structure of the artery walls. However, the features from V-JEPA (VideoMix2M) put the background into the same cluster and give more distinction to the artery walls. This may explain why V-JEPA (VideoMix2M) improves the model's performance. While the features from the initial weights of the model retain the original structure and the artery walls are visible to the human eye, a closer look at the color of the features shows that the artery walls are not as distinguishable from the background or other structures, as they blend into a gradient of colors. Features that appear good to human eyes may not be the best for the model to learn from.
