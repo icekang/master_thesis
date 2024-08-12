@@ -480,7 +480,7 @@ It is worth pointing out that, in the Calcium OCT dataset, the outcome of the mo
     \label{fig:scale-analysis}
 \end{figure}
 
-As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher averaged Dice score. Conversely, CLIP is less effective than the supervised pre-training, yet it is more beneficial than not having any pre-training.
+As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher averaged Dice score. Conversely, CLIP is less effective than supervised pre-training, yet it is more beneficial than not having any pre-training.
 
 % We hypothesize two possible scenarios. One scenario is that eight volumes, with four training, two validation, and two testing volumes, are already in a low data regime.  Further studying them does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low-data regimes. The other 
 One possible scenario is that CLIP features are not as effective as supervised pre-training features. CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns those features. This leads to more data being needed for CLIP to translate the implicit features into the explicit features, as we see CLIP thrive as the scale of the dataset increases. 
