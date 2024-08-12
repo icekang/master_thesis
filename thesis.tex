@@ -469,19 +469,34 @@ The best model in our study is 2D nnUNet, which achieved an average Dice score o
 
 \section{Discussion}
 \subsection{Scale Analysis}
-We conducted a study on the scale of the dataset used to train the model and its effect on model performance. We randomly subsampled 33\%, 50\%, 66\%, and 83\% of the Calcium OCT dataset while excluding the test set. Each sampled dataset was split into 75\% and 25\% for training and validation respectively. We then trained the model with the training set, while tracking the best model with the validation set. The final Dice score is calculated using the test set which remains the same across all scales and experiments.
+We conducted a study on the scale of the dataset used to train the model and its effect on model performance. We randomly subsampled 33\%, 50\%, 66\%, and 83\% of the Calcium OCT dataset while excluding the test set. Each sampled dataset was split into 75\% and 25\% for training and validation respectively. We then trained the model with the training set, while tracking the best model with the validation set. The final Dice score and cross entropy loss are calculated using the test set which remains the same across all scales and experiments.
 
-It is worth pointing out that, in the Calcium OCT dataset, the outcome of the model is highly sensitive to the selection of training data. This is unsurprising as the total size of the dataset is particularly small. This reflects on the standard deviation and the Dice score volatility, as the scale increases.
+It is worth pointing out that, in the Calcium OCT dataset, the outcome of the model is highly sensitive to the selection of training data. This is unsurprising as the total size of the dataset is particularly small. This reflects on the standard deviation and the scores volatility, as the scale increases.
 
 \begin{figure}[hbt]
     \centering
-    \includegraphics[width=0.5\linewidth]{figures/discussion_scale_analysis.png}
-    \caption{Dice score of 2D and 3D nnUNet on Calcium OCT dataset subsampled to 33\% and 66\% of the original size.}
-    \label{fig:scale-analysis}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \includegraphics[width=1\linewidth]{figures/discussion_scale_analysis.png}
+        \caption{Dice score scale analysis.}
+        \label{fig:scale-analysis}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.49\textwidth}
+        \includegraphics[width=1\linewidth]{figures/discussion_cross_entropy_scale_analysis.png}
+        \caption{Cross entropy loss scale analysis.}
+        \label{fig:cross-entropy-scale-analysis}
+    \end{subfigure}
+    \caption{Scale analysis of 3D nnUNets trained on the Calcium OCT dataset, subsampled at different scales.}
 \end{figure}
 
 As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher averaged Dice score. Conversely, CLIP is less effective than supervised pre-training, yet it is more beneficial than not having any pre-training.
 
+The model's confidence and its correctness can be quantified using cross entropy loss. When the model is highly confident of its prediction and the prediction is correct, the loss is low. In contrast, when the model is confident of its incorrect prediction, the loss is high. The mathematical definition of cross entropy loss is defined below
+
+\begin{equation}
+-\frac{1}{N}\sum_{i=1}^{N}\left[y_{i}\cdot\log\left(p(y_{i})\right)+ \left( 1-y_{i} \right)\cdot \log\left(1 - p(y_{i})\right) \right]
+\end{equation}
+
+As shown in Figure~\ref{fig:cross-entropy-scale-analysis}, supervised pre-training on the LaW OCT dataset and CLIP can bolster the correctness and confidence of the 3D nnUNet. Although CLIP may be less effective than its pre-training counterpart, it costs less and can serve as an alternative option to improve prediction confidence and accuracy in a resource-limited environment.
 % We hypothesize two possible scenarios. One scenario is that eight volumes, with four training, two validation, and two testing volumes, are already in a low data regime.  Further studying them does not reflect what other self-supervised learning research has shown, which is that SSL is effective in low-data regimes. The other 
 One possible scenario is that CLIP features are not as effective as supervised pre-training features. CLIP implicitly learns the features of the lumen and wall, while supervised pre-training explicitly learns those features. This leads to more data being needed for CLIP to translate the implicit features into the explicit features, as we see CLIP thrive as the scale of the dataset increases. 
 % We recommend conducting more studies on the scale of the dataset, as this study is only preliminary and may not be conclusive.
