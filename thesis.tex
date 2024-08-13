@@ -506,7 +506,7 @@ It is worth pointing out that, in the Calcium OCT dataset, the outcome of the mo
         \caption{Cross entropy loss scale analysis.}
         \label{fig:cross-entropy-scale-analysis}
     \end{subfigure}
-    \caption{Scale analysis of 3D nnUNets trained on the Calcium OCT dataset, subsampled at different scales.}
+    \caption{Scale analysis of 3D nnUNets trained on the Calcium OCT dataset, subsampled at different scales. The values are shown in a moving average with a window size of 2.}
 \end{figure}
 
 As shown in Figure~\ref{fig:scale-analysis}, supervised pre-training on the LaW OCT dataset is more reliable than self-supervised learning on a smaller dataset, resulting in a lower standard deviation and a higher averaged Dice score. Conversely, CLIP is less effective than supervised pre-training, yet it is more beneficial than not having any pre-training.
