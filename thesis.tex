@@ -63,20 +63,21 @@
 \makeacks
 
 \begin{abstract}
-The system tool enables the lateral decomposition of a multi-dimensional
-flux compensator along the timing and space axes.
+% The system tool enables the lateral decomposition of a multi-dimensional
+% flux compensator along the timing and space axes.
 
-The abstract serves as an executive summary of your project.
-Your abstract should cover at least the following topics, 1-2 sentences for
-each: what area you are in, the problem you focus on, why existing work is
-insufficient, what the high-level intuition of your work is, maybe a neat
-design or implementation decision, and key results of your evaluation.
+% The abstract serves as an executive summary of your project.
+% Your abstract should cover at least the following topics, 1-2 sentences for
+% each: what area you are in, the problem you focus on, why existing work is
+% insufficient, what the high-level intuition of your work is, maybe a neat
+% design or implementation decision, and key results of your evaluation.
+
 \end{abstract}
 
-\begin{frenchabstract}
-For a doctoral thesis, you have to provide a French translation of the
-English abstract. For other projects this is optional.
-\end{frenchabstract}
+% \begin{frenchabstract}
+% For a doctoral thesis, you have to provide a French translation of the
+% English abstract. For other projects this is optional.
+% \end{frenchabstract}
 
 \maketoc
 
@@ -84,17 +85,42 @@ English abstract. For other projects this is optional.
 \chapter{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%
 
-The introduction is a longer writeup that gently eases the reader into your
-% thesis~\cite{dinesh20oakland}. Use the first paragraph to discuss the setting.
-In the second paragraph, you can introduce the main challenge that you see.
-The third paragraph lists why related work is insufficient.
-The fourth and fifth paragraphs discuss your approach and why it is needed.
-The sixth paragraph will introduce your thesis statement. Think about how you can
-distill the essence of your thesis into a single sentence.
-The seventh paragraph will highlight some of your results
-The eighth paragraph discusses your core contribution.
+% The introduction is a longer writeup that gently eases the reader into your
+% % thesis~\cite{dinesh20oakland}. Use the first paragraph to discuss the setting.
+% In the second paragraph, you can introduce the main challenge that you see.
+% The third paragraph lists why related work is insufficient.
+% The fourth and fifth paragraphs discuss your approach and why it is needed.
+% The sixth paragraph will introduce your thesis statement. Think about how you can
+% distill the essence of your thesis into a single sentence.
+% The seventh paragraph will highlight some of your results
+% The eighth paragraph discusses your core contribution.
 
-This section is usually 3-5 pages.
+% This section is usually 3-5 pages.
+
+A profuse amount of self-supervised learning researches on images are stemming from the success of its counterpart in natural language processing (NLP). In NLP, large language model is a groundbreaking invention that permits researchers to utilize unannotated data, which are omnipresent thanks to the advent of the internet. Researchers have realized that by masking a segment of texts, and letting the machine guess them by the surrounding texts, a context, the machine can be used for downstream natural language tasks thereafter. They call masking the texts and predicting them by their contexts a pre-text task, a task done before the main task, that does not require any human annotation. Along with texts on the internet come images. However, it is unclear what pre-text tasks could give as effective as the masked language modelling (MLM) in NLP. 
+
+Visual self-supervised learning has been evolving from denoising, colorization, and solving jigsaw puzzle to aligning different views of the same image, restoring highly distorted parts of an image, and predicting the masked segments of an image by their contexts. Later, visual self-supervised learning has been extended to videos, as they have more contexts to learn from than static images. Additionally, videos and 3D images share similar characteristics, with videos incorporating a temporal dimension and 3D images adding spatial depth.
+
+Coronary artery disease (CAD) is a primary cause of heart diseases, which is caused by plaques building up on the arteries, impeding the blood flow. Percutaneous coronary intervention (PCI) expands the arteries, but result of this treatment is affected coronary artery calcification (CAC), which interferes the expansion. Consequently, quantification of the calcium plaques is indispensable to the intravascular lithotripsy (IVL), which then sends sonic pressure waves to pulverize the plaques.
+
+Acquiring human annotations for medical images is particularly challenging, because they need experts who understand specific medical image modalities. Specifically, the experts must identify the calcium deposits in the optical coherence tomography (OCT) images. Afterwards, the model replicate the experts by studying their segmentation masks. Therefore, they medical imaging can highly benefit from self-supervised learning, leveraging the unannotated OCT images to improve the segmentation.
+
+There are gaps worth filling in the calcium segmentation on OCT images. First, the gap between the visual self-supervised learning on natural images and medical images. Recent visual SSL on natural images explores the efficacy of contrastive, and generative pre-text tasks, whereas, only contrastive tasks are well studied in medical imaging. The generative visual SSL on medical images are limited to restorative, leaving masked patch prediction to be investigated. Second, a way to capitalize the multi-modality nature of OCT images of patients treated for their CAD. In essence, the images of arteries before IVL, after IVL, and after stents are employed are captured. They are the same arteries at different stages of the treatment. It is worth studying what could they be used for after the image co-registration. Lastly, an alternative of visual self-supervised learning, a supervised pre-training. Supervised pre-training, or fine-tuning from the model trained for others tasks is a common practice in computer vision. In our setting, there are annotations for lumen and wall of the OCT images which we must examine along with other visual SSL.
+
+In this thesis, we aimed to bridge the gaps between modern self-supervised learning and self-supervised learning in medical imaging. We examined the state-of-the-art restorative task in 3D medical imaging, state-of-the-art masked patch prediction in natural videos, and multi-modal self-supervised learning for co-registered OCT images. We compared these algorithms to training models from scratch and fine-tuning the models from their supervised pre-training tasks such as natural image segmentation, medical image segmentation, and natural image SSL, which are the benchmarks in their respective fields. We aimed to present comprehensive results and comparisons, along with an analysis of the algorithms to determine when it is appropriate to use certain methods and why they are effective.
+
+We found that the best method to improve calcium segmentation is to pre-train the model to segment the lumen and wall of the arteries. However, this method requires possessing another set of medical image annotation relevant to the downstream task. Economical alternatives includes utilizing either multi-modal or restorative pre-training. While the former requires inexpensive co-registration, the latter does not need any annotation. 
+This, of course, comes with trade-off which .% TODO: wati for analysis of the Genesis
+Our experiments illustrate that masked patch prediction is not suitable as a pre-text task in medical imaging, leaving it for future research to explore further.
+
+Our contributions are as follow:
+\begin{enumerate}
+    \item Comparing the CNN-based and transformer-based segmentation models.
+    \item Studying self-supervised learning for medical imaging, including contrastive, restorative and generative approach, to beidge the gap between natural and medical visual self-supervised learning.
+    \item Comparing the efficacy of off-the-shelves pre-trained models from self-supervised and supervised pre-training.
+    \item Proposing and comparing segmentation heads for V-JEPA, a transformer-based SSL for natural videos, and an approach to track its convergence during the pre-training.
+    \item Proposing modifications to CLIP pre-training for multi-modal co-registered OCT images.
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
@@ -311,7 +337,7 @@ Originally, the algorithm is designed for language-image pairs. However, we adap
 
 From our experiments, we found that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. We did a sanity check on different configurations by passing the same images to them and seeing whether they could learn to match a much simpler problem. It should be able to encode the same image to the same vector. We sanity-checked 3 configurations, separate encoders and projectors, separate encoders and shared projectors, and shared encoders and projectors. We found that separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image.
 
-Consequently, we applied these two configurations to the main task of matching co-registered images. This time, only the shared encoders and projectors could converge. This is reasonable, as the image encoder and its projector are forced to learn a representation that can be used for both modalities. This approach is illustrated in Figure~\ref{fig:clip-oct}. We refer the reader to Section~\cite{sec:results:discussion:clip} for details of the experiment.
+Consequently, we applied these two configurations to the main task of matching co-registered images. This time, only the shared encoders and projectors could converge. This is reasonable, as the image encoder and its projector are forced to learn a representation that can be used for both modalities. This approach is illustrated in Figure~\ref{fig:clip-oct}. We refer the reader to Section~\ref{sec:results:discussion:clip} for details of the experiment.
 
 \begin{figure}[hb]
     \centering
