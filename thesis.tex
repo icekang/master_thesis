@@ -112,8 +112,8 @@ Our contributions are as follows:
 \begin{enumerate}
     \item Comparing the CNN-based and transformer-based segmentation models.
     \item Studying self-supervised learning for medical imaging, including contrastive, restorative, and mask predicting approaches, to bridge the gap between natural and medical visual self-supervised learning.
-    \item Comparing the efficacy of off-the-shelves pre-trained models from self-supervised and supervised pre-training.
-    \item Proposing and comparing segmentation heads for V-JEPA, a transformer-based SSL for natural videos, and an approach to track its convergence during the pre-training.
+    \item Comparing the efficacy of pre-trained models from self-supervised and supervised pre-training.
+    \item Proposing and comparing segmentation heads for V-JEPA, a transformer-based SSL method for natural videos, and an approach to track its convergence during the pre-training.
     \item Proposing modifications to CLIP pre-training for multi-modal co-registered OCT images.
 \end{enumerate}
 
@@ -157,8 +157,10 @@ In recent years, generative tasks have now gained more attention in medical imag
 % This section is usually 5-10 pages.
 
 \section{Datasets}\label{sec:design:datasets}
-The main goal of this project is to study the effectiveness of self-supervised learning algorithms for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 volumes with calcium plaque annotation. Lumen and Wall OCT (Dataset \ref{enum:lumen-and-wall-dataset}) is a dataset of 20 volumes annotated with lumen and wall. These two datasets are mutually exclusive, meaning that the OCT images are not duplicated between them. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment. Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes the morphological properties of the calcium plaques, lumen, and wall. It can be summarized as follows:
-
+The main goal of this project is to study the effectiveness of self-supervised and supervised pre-training methods for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 volumes with calcium plaque annotations. Lumen and Wall OCT LaW OCT is a dataset of 20 volumes annotated with lumen and wall (Dataset \ref{enum:lumen-and-wall-dataset}). These two datasets are mutually exclusive, meaning that the OCT images are not duplicated between them. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment.
+% Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes the morphological properties of the calcium plaques, lumen, and wall. 
+It can be summarized as follows:
+% TODO: describe Pre/Post-IVL here
 \begin{enumerate}
     \item Annotated datasets:
     \begin{enumerate}
@@ -173,93 +175,77 @@ The main goal of this project is to study the effectiveness of self-supervised l
     \end{enumerate}
 \end{enumerate}
 
-Each dataset has its purpose in this study. Calcium OCT is used for evaluating the effectiveness of each algorithm on calcium segmentation. On the other hand, Lumen and Wall OCT can be used for supervised pre-training of the algorithms, while unannotated datasets are used for self-supervised pre-training. Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
+Each dataset has its purpose in this study. Calcium OCT is used for evaluating the effectiveness of each algorithm on calcium segmentation, our task of interest. On the other hand, Lumen and Wall OCT (LaW OCT) can be used for supervised pre-training, while unannotated datasets are used for self-supervised pre-training. 
+% Additionally, the tabular meta-data can be used to evaluate the effectiveness of the algorithms on multi-modalities, but this is not the main focus of this study.
 
 \begin{figure}[hbt]
     % \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\linewidth]{figures/fig_datasets_calcium_oct_sample.pdf}
-        \caption{An example of an annotated image in the Calcium OCT dataset.}
+        \caption{An example of an annotated image from the Calcium OCT dataset.}
         \label{fig:calcium-oct}
     \end{subfigure}%
     \hfill
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\linewidth]{figures/fig_datasets_law_oct_sample.pdf}
-        \caption{An example of an annotated image from the Lumen and Wall OCT dataset.}
+        \caption{An example of an annotated image from the Lumen and Wall OCT dataset (LaW OCT).}
         \label{fig:lumen-and-wall-oct}
     \end{subfigure}
-    \caption{For each image, the first row displays the original image in three axes, while the bottom row presents the segmentation mask for the corresponding views.}
+    \caption{For each image, the top row shows the original image at the middle slice across three axes, while the bottom row displays the corresponding segmentation masks.}
     \label{fig:enter-label}
 \end{figure}
 
-In Calcium OCT, only 1 class, calcium, is annotated. The size of each image is $500\times 500$ while the depth varies from $375$ to $539$. An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. The training volumes are divided into 3 folds of training and validation sets. In each fold, the model can be trained using the training set, while the best model can be selected using the validation set. Subsequently, all models trained on each fold can be evaluated on the testing set that has not been seen during training. Finally, the performance on the testing set can be averaged to get the final performance. This is done to ensure the robust evaluation of the models.
+Each dataset has unique characteristics and is divided into training, validation, and testing sets, except for the unannotated datasets, which are used for self-supervised pre-training.
+Calcium OCT has one class, calcium. The size of each image is $500\times 500$ while the depth varies from $375$ to $539$. An example of the annotated image is shown in Figure~\ref{fig:calcium-oct}. The dataset is split into 6 training volumes and 2 testing volumes. The training volumes are divided into 3 folds of training and validation sets. In each fold, the model is trained using the training set, while the best model is selected using the validation set. Subsequently, all models trained on each fold are evaluated on the testing set not seen during training. Finally, the performance of the 3 folds on the testing set can be averaged to report the final performance. This is done to ensure the robust evaluation of the methods.
 
-Lumen and Wall OCT has 2 classes, lumen, and wall, and is divided into 16 training volumes and 4 testing volumes. The size of each image is $500\times 500$ while the depth varies from $270$ to $540$. An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
+LaW OCT has 2 classes, lumen, and wall, and is divided into 16 training volumes and 4 testing volumes. The size of each image is $500\times 500$ while the depth varies from $270$ to $540$. An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
 
-% \begin{figure}[ht]
-%     \centering
-%     \includegraphics[width=0.6\textwidth]{figures/fig_datasets_calcium_oct_sample.pdf}
-%     \caption{An example of an annotated image in the Calcium OCT dataset. The first row displays the original image in three axes, while the bottom row presents the segmentation mask for the corresponding views.}
-%     \label{fig:calcium-oct}
-% \end{figure}
-
-% \begin{figure}[hbt]
-%     \centering
-%     \includegraphics[width=0.6\textwidth]{figures/fig_datasets_law_oct_sample.pdf}
-%     \caption{An example of an annotated image from the Lumen and Wall OCT dataset. The first row displays the original image in three axes, while the bottom row presents the segmentation mask for the corresponding views}
-%     \label{fig:lumen-and-wall-oct}
-% \end{figure}
-
-The unannotated datasets are of size $500\times 500$. They are not split into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may split them into train and validation sets for hyperparameter tuning. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
+The unannotated datasets are of size $500\times 500$, and varying depth. They are not split into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may divided into training and validation sets to track its convergence. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/fig_datasets_unlabeled_oct_sample.pdf}
-    \caption{Samples of unannotated OCT images. The left column is Pre-IVL, the middle column is Post-IVL, and the right column is Post-Stent OCT modality.}
+    \caption{Samples of unannotated OCT images: the left column shows Pre-IVL, the middle column Post-IVL, and the right column Post-Stent OCT.}
     \label{fig:unannotated-oct}
 \end{figure}
 
 \newpage
 \section{Algorithms}
-\subsection{CNN-based Supervised Learning - nnUNet}\label{sec:design:nnunet}
-nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. First, the data fingerprint must be introduced, specifying the number of image modalities, how the algorithm should normalize each modality, and the number of segmentation classes and regions. Additional information about data, including intensity ranges, spacing, shape, and resolution, is derived from its metadata. With this fingerprint, nnUNet automatically decides the network topology, sampling strategy, batch size, and patch size. It is also worth noting that nnUNet provides a supervised pre-training pipeline for the model to be trained on other datasets before fine-tuning it on the target dataset.
+In this section, we describe various learning methods for calcium segmentation, categorizing them into supervised and self-supervised approaches. Supervised learning involves either training a model from scratch using only the Calcium OCT dataset or pre-training it on another annotated dataset before fine-tuning it for calcium segmentation. This pre-training on annotated dataset is referred to as supervised pre-training, while the subsequent fine-tuning is known as transfer learning. In contrast, self-supervised learning involves pre-training a model on an unannotated dataset followed by fine-tuning on the Calcium OCT dataset. The key difference between supervised and self-supervised in this study lies in whether the pre-training process requires human annotation.
+\subsection{Supervised Learning}
+\subsubsection{nnUNet}\label{sec:design:nnunet}
+nnUNet is a self-configuring framework for medical image segmentation~\cite{Isensee2020}. First, the data fingerprint must be provided to nnUNet, which specifies the number of image modalities, normalization process for each modality, and the number of segmentation classes. Additional details, such as intensity range, image spacing, shape, and resolution, are derived from the metadata. Using this fingerprint, nnUNet automatically determines the network topology, sampling strategy, data augmentation approach, batch size, and patch size for the training process. Notably, nnUNet also offers a supervised pre-training pipeline, allowing the model to be trained on other datasets before fine-tuned on the target dataset.
 
-To apply the algorithm to our datasets, we design two approaches. The first approach is to directly train the model on Calcium OCT. In the second approach, we pre-train the model on Lumen and Wall OCT before fine-tuning on Calcium OCT. 
+We designed two approaches to apply the algorithm to our datasets. The first approach involves directly training the model on the Calcium OCT dataset. In the second approach, we pre-trained the model on the LaW OCT dataset before fine-tuning it for calcium segmentation. 
 
-% Discuss 2D and 3D nnUNet for segmentation
-nnUNet provides both 2D and 3D segmentation architectures as well as a cascade 3D architecture of full-resolution and low-resolution networks. In our initial experiments, we find that 2D and 3D architectures are performing better than the cascade architecture. This leads us to subsequently only use 2D and 3D architectures for the rest of the experiments.
+nnUNet offers both 2D and 3D segmentation architectures, as well as a cascade 3D architecture combining full-resolution and low-resolution networks. Our preliminary experiments indicated that the 2D and 3D architectures outperformed the cascade architecture. Consequently, we decided to use only the 2D and 3D architectures for the remainder of our experiments.
 
-% TODO: add a photo of the nnUNet pipeline
+\subsubsection{SegFormer}
+SegFormer is a transformer-based model that integrates multi-resolution feature fusion through simple multi-layer perceptrons (MLP~\cite{Rumelhart1986})~\cite{Xie2021SegFormer}. Pre-trained on the ADE20k dataset~\cite{Zhou2018}, SegFormer mirrors U-Net's encoder by downsampling input images via overlap patch merging, which unifies adjacent patches into a single unit. This process allows the model to capture the features at various resolutions. Furthermore, SegFormer utilizes these multi-resolution features with an All-MLP decoder, which aligns lower-resolution features with the channels of their higher-resolution counterparts. The decoder then upsamples the features up to the original resolution and concatenates them with the higher-resolution features, ultimately predicting the segmentation masks using only MLPs and upsampling layers. 
 
-\subsection{Transformer-based Supervised Learning - SegFormer}
-SegFormer is a transformer-based model with multi-resolution feature fusion using simple multi-layer perceptrons (MLP~\cite{Rumelhart1986})~\cite{Xie2021SegFormer}. It has been pre-trained on the ADE20k dataset~\cite{Zhou2018}. Resembling U-Net's encoder, SegFormer explicitly downsamples the input image using overlap patch merging, which unifies adjacent patches into a single patch. This enables the model to learn the features at different resolutions. Furthermore, SegFormer employs these multi-resolution features with an All-MLP decoder that projects lower-resolution features to match the channels of their higher-resolution counterparts. The decoder then upsamples the features up to the original resolution and concatenates them with the higher-resolution features. Finally, the decoder predicts the segmentation masks using only MLPs and upsampling layers. 
+SegFormer architectures comes in various sizes, from MiT-B1 to MiT-B5, with the largest model, MiT-B5, containing 84.7M parameters. We fine-tuned the largest pre-trained model on Calcium OCT for 80,000 iterations, which was sufficient for the model to converge.
 
-SegFormer architectures are available in multiple sizes, from B1 to B5, with the largest model, MiT-B5, containing 84.7M parameters. We fine-tune the largest pre-trained model on Calcium OCT for 80,000 iterations, which we find to be sufficient for the model to converge.
-% TODO: add a photo of SegFormer architecture
+\subsubsection{RADIO}
+RADIO is a distillation framework that enables the use of multiple vision foundational models as teachers \cite{Ranzinger2024RADIO}. The framework was assessed on 2D segmentation tasks, incorporating batch normalization and linear projection in the decoder head. In alignment with this evaluation protocol, we employed their pre-trained ViT model. Specifically, we utilized the RADIO ViT-H/16 model and fine-tuned it on the Calcium OCT dataset. The training was conducted for 80,000 iterations, which was determined to be adequate for model convergence.
 
-\subsection{Transformer-based Supervised Learning - RADIO}
-RADIO is a distillation framework that allows more than one vision foundation model to be its teacher~\cite{Ranzinger2024RADIO}. The author evaluates the model on 2D segmentation tasks, using batch normalization and linear projection as a decoder head. We follow the same evaluation setting to utilize their pre-trained ViT model. We use the RADIO pre-trained ViT-H/16 model and fine-tune it on Calcium OCT. The model is trained for 80,000 iterations which we find to be sufficient for the model to converge.
+\subsection{SuPreM}~\label{sec:design:suprem}
+SuPreM is a supervised pre-training method specifically designed for 3D medical image segmentation \cite{Li2024}. It involves training models on a large scale dataset of CT volumes before fine-tuning. Among the models pre-trained with SuPreM, we chose the SwinUNTER model~\cite{Tang2022} due to its reported superior performance and fine-tuned it on the Calcium OCT dataset. It is important to note that the publicly available models have been pre-trained on 2,100 CT volumes, rather than 9,262, as the authors have not yet released the fully pre-trained versions.
 
-\subsection{Transformer-based Medical Supervised Learning - SuPreM}~\label{sec:design:suprem}
-SuPreM is a supervised pre-training method for medical image segmentation~\cite{Li2024}. We fine-tune publicly available SuPreM pre-trained models on Calcium OCT. We choose their best-performing model, SwinUNTER~\cite{Tang2022}. SwinUNTER is a transformer-based model designed to segment brain tumors in 3D MRI images. The architecture is based on the Swin Transformer as its encoder, which is a multi-scale transformer using shifted windows~\cite{Liu2021Swin}. SwinUNTER utilizes a CNN-based decoder called UNTER, hence the name SwinUNTER. This decoder consists of a series of convolutional layers with upsampling and merges feature at different levels via skip connections~\cite{Hatamizadeh2022}. It is worth noting that the publicly available models have been pre-trained on $2,100$ CT volumes, rather than $9,262$, as the authors have not yet released the fully pre-trained models.
+SwinUNTER is a transformer-based model designed for segmenting brain tumors in 3D MRI images. Its architecture is built upon the Swin Transformer encoder, extracting hierarchical features from the input image.~\cite{Liu2021Swin}. The model also includes a CNN-based decoder, UNTER, featuring convolutional layers with upsampling and skip connections to merge features across different levels~\cite{Hatamizadeh2022}. The authors of SwinUNTER proposed a self-supervised learning algorithm for the model~\cite{Tang2022}. 
 
-In addition to SuPreM pre-training, original authors of SwinUNTER have proposed a self-supervised learning pre-training algorithm for the model~\cite{Tang2022}. Therefore, we conduct three experiments to evaluate the algorithms. The first setting directly utilizes the pre-trained model on the SuPreM dataset and fine-tunes it on Calcium OCT. The second setting uses the self-supervised SwinUNTER model and fine-tunes it on Calcium OCT. The last setting uses the SwinUNTER model without any pre-training, and trains it on Calcium OCT. This approach allows us to evaluate the effectiveness of SuPreM pre-training and the self-supervised learning proposed in SwinUNTER on Calcium OCT.
+To evaluate the algorithms, we conducted three experiments. The first experiment fine-tuned the pre-trained model on the Calcium OCT dataset. The second experiment involved fine-tuning the self-supervised SwinUNTER model on the same dataset. The third experiment trained the SwinUNTER model from scratch, serving as a baseline to assess the effectiveness of SuPreM pre-training and the self-supervised learning method proposed for SwinUNTER within the context of the Calcium OCT dataset.
 
-\subsection{Unimodal Self-Supervised Learning - V-JEPA}
-V-JEPA is a self-supervised learning method that acquires representations by predicting the encoded vectors of masked segments of a video~\cite{Bardes2024Vjepa}. We design two experiments to study the effectiveness of V-JEPA on OCT images. First, we directly fine-tune the pre-trained V-JEPA model on Calcium OCT. V-JEPA pre-trains the ViT model on the VideoMix2M dataset, which contains 2M videos. We then fine-tune this model on Calcium OCT. In the second experiment, we apply V-JEPA pre-training to unannotated OCT images and fine-tune the resulting model on Calcium OCT. Since the original paper does not evaluate the model on segmentation tasks, we will discuss the implementation of the decoder head in Section~\ref{sec:implementation:vjepa}.
+\subsection{Self-supervised Learning}
+\subsubsection{V-JEPA}
+V-JEPA is a self-supervised learning method that learns representations by predicting the masked parts of a video. It uses a context encoder to make these predictions and compares the predicted latent vectors with those generated by a target encoder, which views the video without masking~\cite{Bardes2024Vjepa}. The author provides ViT models pre-trained on the VideoMix2M dataset, which contains 2 million videos, using V-JEPA pre-training. We conducted two experiments to evaluate the effectiveness of V-JEPA on OCT images. First, we fine-tuned the V-JEPA model on Calcium OCT. In the second experiment, we applied V-JEPA pre-training to the Unannotated OCT (Dataset ~\ref{enum:unannotated-dataset}) and fine-tuned the resulting model on Calcium OCT. Since the original paper does not address segmentation tasks, we will discuss the implementation of the decoder head in Section~\ref{sec:implementation:vjepa}.
 
-% TODO: add a photo of the V-JEPA framework
+\subsubsection{Genesis}
+Genesis is a self-supervised learning method that learns representations by restoring the original images from their corrupted versions~\cite{Zhou2021}. In their paper, Genesis is applied to a U-Net architecture, which contains 15M parameters. We adapted their method to the same 3D nnUNet architecture in Section~\ref{sec:design:nnunet}, which has 30M parameters. Thereafter, we applied Genesis pre-training to unannotated OCT images and fine-tune the resulting model on Calcium OCT.
 
-\subsection{Unimodal Self-Supervised Learning - Genesis}
-Genesis is a self-supervised learning method that learns representations by restoring the original images from their corrupted versions~\cite{Zhou2021}. In their paper, Genesis is applied to a U-Net architecture, which contains 15M parameters. We adapt their method to the same 3D nnUNet architecture in Section~\ref{sec:design:nnunet}, which has 30M parameters. Thereafter, we apply Genesis pre-training to unannotated OCT images and fine-tune the resulting model on Calcium OCT.
-
-% TODO: add a photo of the Genesis framework
-
-\subsection{Multi-modal Self-Supervised Learning - CLIP}
-Contrastive Language-Image Pre-training (CLIP) is a self-supervised learning method that learns representations by matching encoded vectors of images and their text captions~\cite{Radford2021CLIP}. We adapt CLIP to OCT images by using co-registered Pre-IVL and Post-IVL images. We use the same nnUNet architecture as described in Section~\ref{sec:design:nnunet}. CLIP pre-training is applied to the 3D nnUNet. The resulting model is then fine-tuned on Calcium OCT. We modify the code from a publicly available project~\cite{Shariatnia2021}. The original paper proposes a pre-training framework for language and image. However, we apply the framework to multi-modalities of OCT images. We will discuss the adaptation of the framework to our specific use case in Section~\ref{sec:implementation:clip}.
-% TODO: add a photo of the CLIP framework
+\subsubsection{CLIP}
+Contrastive Language-Image Pre-training (CLIP) is a contrastive learning method that matches encoded vectors of images with their text captions~\cite{Radford2021CLIP}. In our work, we adapted CLIP to OCT images by using co-registered Pre-IVL and Post-IVL images. We used the same nnUNet architecture as described in Section~\ref{sec:design:nnunet}. CLIP pre-training was applied to the 3D nnUNet which was was then fine-tuned on the Calcium OCT dataset. To implement this, we modified code from a publicly available project~\cite{Shariatnia2021}. While the original paper proposed a pre-training framework for aligning language and images, we tailored this framework for use with co-registered OCT images. Details of this adaptation will be discussed in Section~\ref{sec:implementation:clip}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}
@@ -670,7 +656,7 @@ In medical imaging, self-supervised learning would be highly beneficial as human
 % Contrastive learning
 TS-SSL~\cite{Zhang2021} proposes an SSL on 2D spectral domain optical coherence tomography (SD-OCT) images of the retina to better classify retinal anomaly. It learns representation from classification labels, and discriminative and generative tasks simultaneously. Using contrastive loss, it maximizes the similarity between rotated views or shuffled patches of the same image and minimizes the similarity between views of different images. At the same time, it uses the same representation to predict the rotation angle of the rotated views and the order of the shuffled patches. Along with these tasks, TS-SSL also uses classification labels to predict the class of the image. However, this method only works better than supervised learning when 10\% of the labels are used for training. TS-SSL is not the only method that adopts modern SSL methods for medical imaging. Dufumier et al.~\cite{Dufumier2021} add another layer to contrastive learning by using meta-data available in medical images. Specifically, they use the age of the patient to indicate the degree of similarity between different images. This method improves bipolar disorder, Alzheimer and schizophrenia classification on 3D brain MRI images. Similarly, CLIP loss~\cite{Radford2021CLIP} can be used to leverage multi-modalities for representation learning ~\cite{Hager2023}. Encouraging images and their tabular meta-data, ubiquitous in medical imaging, to have similar representations. This method has been shown to improve classification tasks on brain MR images. 
 
-Exploring the boon of contrastive learning in segmentation, He et al.~\cite{He2022Intra} propose intra- and inter-slice contrastive learning for point-supervised OCT fluid segmentation of the retina. The nature of this retinal OCT is 3D. While training the segmentation model with U-Net~\cite{Ronneberger2015}, the authors leverage the fact that adjacent slices of the same volume are highly correlated, and inter-slice CL is proposed to maximize the similarity between encoded vectors of adjacent slices as well as their segmentation masks. Segmentation masks are also compared with their ground truth masks and cross-entropy loss. Segmented masks are subsequently used to select the locations of small patches to be used for intra-slice CL. Intra-slice CL maximizes the similarity between encoded fluid patches and the background fluid patches. Its result outperforms other point-based segmentation methods but is not as good as fully supervised learning. Besides spatial consistency as in previous work, temporal consistency can also be imposed~\cite{Ren2022}. Given that images are taken from the same patient at different time points, temporal consistency can be used to improve the segmentation of the images. This method has been shown to improve the segmentation of brain MRI images.
+Exploring the benefits of contrastive learning in segmentation, He et al.~\cite{He2022Intra} propose intra- and inter-slice contrastive learning for point-supervised OCT fluid segmentation of the retina. The nature of this retinal OCT is 3D. While training the segmentation model with U-Net~\cite{Ronneberger2015}, the authors leverage the fact that adjacent slices of the same volume are highly correlated, and inter-slice CL is proposed to maximize the similarity between encoded vectors of adjacent slices as well as their segmentation masks. Segmentation masks are also compared with their ground truth masks and cross-entropy loss. Segmented masks are subsequently used to select the locations of small patches to be used for intra-slice CL. Intra-slice CL maximizes the similarity between encoded fluid patches and the background fluid patches. Its result outperforms other point-based segmentation methods but is not as good as fully supervised learning. Besides spatial consistency as in previous work, temporal consistency can also be imposed~\cite{Ren2022}. Given that images are taken from the same patient at different time points, temporal consistency can be used to improve the segmentation of the images. This method has been shown to improve the segmentation of brain MRI images.
 
 % Restorative tasks
 Alternatively, generative tasks have been proposed as pre-text tasks for medical imaging. Patch shuffling~\cite{Chen2019} proposes a restorative task for 2D medical images of MRI, CT, and ultrasound. First patches are randomly cut from the original image and placed in random locations. The model learns to restore the images to their original versions. This method improves the downstream segmentation tasks in a data-scarce setting. In-painting~\cite{Pathak2016} removes a part of the image and the model learns to predict the missing part. Advancing further, Genesis~\cite{Zhou2021} explores image distortion algorithms for 3D restorative pre-text tasks on CT images. Thorough experiments show that Genesis outperforms specialized 3D state-of-the-art segmentation models and other pre-text tasks including de-noising~\cite{Vincent2010}, in-painting~\cite{Pathak2016}, jigsaw~\cite{Noroozi2016}, deep clustering~\cite{Caron2018}, rubik's~\cite{Zhuang2019} and patch shuffling~\cite{Chen2019}. This establishes a new baseline for 3D SSL in medical imaging showing that mixing pre-text tasks is beneficial. Pursuing a similar concept, SwinUNTER~\cite{Tang2022} proposes a training ViT-based model with a combination of in-paining, contrastive, and rotation.
