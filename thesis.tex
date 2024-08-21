@@ -309,7 +309,7 @@ Our strategy involved randomly sampling $96$ cubes from each volume, ensuring th
 
 \begin{figure}[t]
     \centering
-    \begin{subfigure}{0.48\textwidth}
+    \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{figures/fig_implementation_genesis_extracted_cube.png}
         \caption{Cubes from unannotated OCT images sampled with the thresholding strategy.}
@@ -317,7 +317,7 @@ Our strategy involved randomly sampling $96$ cubes from each volume, ensuring th
 
     \end{subfigure}%
     \hfill
-    \begin{subfigure}{0.48\textwidth}
+    \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{figures/fig_implementation_genesis_extracted_cube_no_threshold.png}
         \caption{Examples of cubes sampled from unannotated OCT images. Each row represents a sampled cube with slices unrolled along the depth dimension.}
@@ -351,44 +351,43 @@ Building on these findings, we applied the two successful configurations to the 
 % experiments showcase the individual points you want to prove.
 
 % This section is usually 5-10 pages.
-We evaluated the effectiveness of self-supervised learning algorithms on calcium segmentation on coronary OCT images. All the models, pre-trained or not, were fine-tuned on the Calcium OCT dataset using the validation set to select the best model. We did this for 3 folds. The models were then evaluated on the testing set. The performance was measured using the Dice score, a common metric for segmentation tasks. It is defined as follows:
+We evaluated the effectiveness of self-supervised learning algorithms on calcium segmentation on coronary OCT images. All the models were fine-tuned on the Calcium OCT dataset using the validation set to select the best model. We did this for 3 folds. The models were then evaluated on the testing set. The performance was measured using the Dice score, a common metric for segmentation tasks, which is defined as follows:
 
 \begin{equation}
     \text{Dice} = \frac{2 \times \text{TP}}{2 \times \text{TP} + \text{FP} + \text{FN}}
 \end{equation}
 
-where TP, FP, and FN are true positive, false positive, and false negative, respectively. The Dice score ranges from 0 to 1, where 1 indicates perfect segmentation. The Dice score was calculated for each patient in the testing set, and the average Dice score was reported as the final performance of the model for each fold. The final performance is the average of the Dice scores of all folds.
+where TP, FP, and FN are true positive, false positive, and false negative, respectively. The Dice score ranges from 0 to 1, where 1 indicates perfect segmentation. The Dice score was calculated for each patient in the testing set, and the average Dice score was reported as the performance of the model for each fold. The final performance is the average of the Dice scores of all folds.
 
 \section{nnUNet}\label{sec:result:nnunet}
-The Dice score of the default configuration of 3D nnUNet is significantly lower than that of the 2D nnUNet. By reducing the depth of the patch size of the 3D nnUNet from $112$ to $32$, the performance increases significantly. This could result from the smaller depth allowing the model to have more examples to learn from. In addition, expanding the width and height of the patch size from $160\times 128$ to $512\times 512$ does not improve performance. This may be due to the nature of calcium plaques in OCT images, which are localized. Thus, increasing the context in the width and height dimensions does not provide additional information to the model. The performance of the nnUNet on the Calcium OCT dataset is summarized in Figure~\ref{fig:nnunet-results}.
+The Dice score of the default configuration of 3D nnUNet is significantly lower than that of the 2D nnUNet. By reducing the depth of the patch size of the 3D nnUNet from $112$ to $32$, the performance increases significantly. This may result from the smaller depth allowing the model to have more examples to learn from. In addition, expanding the width and height of the patch size from $160\times 128$ to $512\times 512$ does not improve performance. This may be due to the nature of calcium plaques in OCT images, which are localized. Thus, increasing the context in the width and height dimensions does not provide additional information to the model, while reducing examples during the training process. The performance of the nnUNet on the Calcium OCT dataset is summarized in Figure~\ref{fig:nnunet-results}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/result_nnunet_results.png}
     \caption{Dice score of variations of nnUNet. Results are grouped according to the patch size used in training. Results in hashes indicate supervised pre-training on the lumen and wall dataset (LaW OCT). 
-    % The one-sided paired t-test is done between with and without supervised pre-training. It is also done between the best 2D nnUNet model and the supervised pre-trained 3D nnUNet model. Lastly, the test is done between supervised pre-trained 3D nnUNet models.
     }
     \label{fig:nnunet-results}
 \end{figure}
 
 Additionally, pre-training the models with the lumen and wall dataset (LaW OCT) before fine-tuning them on the Calcium OCT significantly improves the 3D performance of the models when their patch sizes are reduced. Calcium plaques are typically located around the periphery of artery walls. Therefore, this pre-training allows the model to learn the features of the walls, which may be useful for calcium segmentation. These pre-trained models are also statistically comparable to the best 2D nnUNet model. As the 2D nnUNet has a better Dice score than the 3D nnUNet, the question arises: Is 3D segmentation necessary, or should we only study 2D segmentation models?
 
-The answer depends on the use cases of the resulting segmentation. In our research, we place greater emphasis on the continuity of the segmentation, as one of the use cases is to reconstruct a 3D digital twin of the image. Consequently, we analyzed the correctness and consistency of the 2D and 3D nnUNet. To add more variety to the consistency analysis, we examined the validation images of each fold rather than the testing images. First, we defined continuity to be the inverse of changes between adjacent segmentation slices. The mathematical definition is as follows.
+In our research, we place greater emphasis on the continuity of the segmentation, as one of the use cases is to reconstruct a 3D digital twin of the image. Consequently, we analyzed the correctness and consistency of the 2D and 3D nnUNet. To add more variety to the continuity analysis, we examined the validation images of each fold rather than the testing images. First, we defined continuity to be the inverse of changes between adjacent segmentation slices. The mathematical definition is as follows.
 
 \begin{equation}
 \text{Continuity} = \left(\frac{1}{M\times (N - 1)}\sum_{i = 1}^{M}\sum_{j = 1}^{N-1} \left| I_{j}^{i} - I_{j+1}^{i}\right|\right)^{-1}
 \end{equation}
 
-where $M$ is the number of validation images and $N$ is the number of slices per volume. $I_{j}^{i}$ denotes a segmentation mask of the $j$th slice at the $i$th volume. Using this definition, we tracked the Dice scores of the validation images while progressively applying morphological operations -- first opening and then closing -- to enhance segmentation continuity. To enhance continuity, we applied different kernel shapes and sizes. The kernels included 3D spheres and ellipsoids. In ellipsoids, the semi-axis in the depth dimension is greater than the others, as discontinuity was likely to occur. The result is illustrated in Figure~\ref{fig:nnunet-continuity-vs-correctness}.
+where $M$ is the number of validation images and $N$ is the number of slices per volume. $I_{j}^{i}$ denotes a segmentation mask of the $j$th slice at the $i$th volume. Using this definition, we tracked the Dice scores of the validation images while progressively applying morphological operations -- first opening and then closing -- to enhance segmentation continuity. We applied different kernel shapes and sizes to smoothen the mask and increase thereby increasing the continuity. The kernels included 3D spheres and ellipsoids. In ellipsoids, the semi-axis in the depth dimension is greater than the others, as discontinuity is likely to occur. The result is illustrated in Figure~\ref{fig:nnunet-continuity-vs-correctness}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\linewidth]{figures/result_nnunet_dice_and_continuity.png}
-    \caption{A plot showing the relationship between Dice scores and continuity as smoothing is increasingly applied. Original denotes the initial segmentation, while the others indicate the kernel shape and size used in smoothing. The size is denoted in $W\times H\times D$ notation.}
+    \caption{A plot showing the relationship between Dice scores and continuity as smoothing is increasingly applied. Original denotes the initial segmentation, while the others indicate the kernel shape and size used in smoothing. The size is denoted in $H\times W\times D$ notation.}
     \label{fig:nnunet-continuity-vs-correctness}
 \end{figure}
 
-As the kernel shape and size change, the segmentation becomes more continuous at the expense of a decrement in the Dice score. The trade-off varies across models, with the 3D nnUNet better retaining the performance while providing better continuity. 
+As the kernel shape and size change, the segmentation becomes more continuous at the expense of a decrement in the Dice score. The trade-off varies across models, with the 3D nnUNet better retaining the performance while providing better continuity. Therefore, 3D segmentation is crucial and worth investigating.
 
 \section{SuPreM}
 We evaluated three configurations of the SwinUNTER model, as described in Section~\ref{sec:design:suprem}. Our findings indicate that SuPreM pre-training on SwinUNTER yields the best results with an average Dice score of $0.631\pm0.030$. This score is statistically higher than those of the other two configurations. SuPreM pre-training provides superior features for calcium segmentation compared to self-supervised learning and training from scratch. The results are summarized in Figure~\ref{fig:suprem-results}.
@@ -396,24 +395,27 @@ We evaluated three configurations of the SwinUNTER model, as described in Sectio
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.5\linewidth]{figures/result_SwinUNETR_results.png}
-    \caption{Dice score of SuPreM's SwinUNTER model. In the parenthesis indicate pre-training algorithms. SuPreM pre-training on SwinUNTER yields the best results and is significantly better than both self-supervised pre-training and training from scratch.}
+    \caption{Dice scores of SwinUNTER models. In the parenthesis indicate pre-training algorithms. SuPreM pre-training on SwinUNTER yields the best results and is significantly better than both self-supervised pre-training and training from scratch.}
     \label{fig:suprem-results}
 \end{figure}
 
-However, when comparing the result of the SuPreM pre-trained SwinUNTER model with that of the best 2D nnUNet model, the 2D nnUNet model outperforms the SuPreM model (see Figure~\ref{fig:transformer-results}). This will be discussed in the following section.
+However, when comparing the result of the SuPreM pre-trained SwinUNTER model with that of the best 2D nnUNet model, the 2D nnUNet model outperforms the SuPreM model (see Figure~\ref{fig:transformer-results}). This will be discussed in the next section.
 
 \section{Transformers-based Models}
-We find that the best 3D nnUNet model outperforms all transformer-based models. This may be attributed to fundamental differences between CNN and transformer architectures. CNNs are designed to learn local features, while transformers are designed to learn global features. Calcium plaques in OCT images are localized, making CNNs more suitable for this task. This is also supported by the fact that, in CNNs, increasing the patch size in the width and height dimensions of the 3D nnUNet does not improve performance, while reducing the patch size in the depth dimension significantly improves performance (see Section~\ref{sec:result:nnunet}). The effectiveness of the SegFormer, ViT (RADIO), and SwinUNTER (SuPreM) compared to the nnUNet is summarized in Figure~\ref{fig:transformer-results}.
+We find that the best 3D nnUNet model outperforms all transformer-based models. This might be due to nnUNet being designed specifically for small-scale datasets which is more suitable for the dataset that we have.
+% This may be attributed to fundamental differences between CNN and transformer architectures. CNNs are designed to learn local features, while transformers are designed to learn global features.
+% Calcium plaques in OCT images are localized, making CNNs more suitable for this task. This is also supported by the fact that, in CNNs, increasing the patch size in the width and height dimensions of the 3D nnUNet does not improve performance, while reducing the patch size in the depth dimension significantly improves performance (see Section~\ref{sec:result:nnunet}).
+The effectiveness of the SegFormer, ViT (RADIO), and SwinUNTER (SuPreM) compared to the nnUNet is summarized in Figure~\ref{fig:transformer-results}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=0.6\linewidth]{figures/result_nnUNet_vs_Transformer_results.png}
-    \caption{Dice scores of transformer-based models compared to those of the nnUNet. Compared to the best 3D nnUNet model pre-trained on the LaW OCT dataset, Dice scores of transformer-based models are statistically significantly lower.}
+    \caption{Dice scores of transformer-based models compared to those of the nnUNet. Compared to the best 3D nnUNet model pre-trained on the LaW OCT dataset, Dice scores of transformer-based models are significantly lower.}
     \label{fig:transformer-results}
 \end{figure}
 
 \section{V-JEPA}
-Each experiment is denoted by its architecture and its decoder head. The dataset V-JEPA was pre-trained on is indicated in the parenthesis. The control experiment, \textbf{ViT + Attentive*}, is the ViT model followed by an attentive decoder head, with intensive data augmentation and positive data sampling, but without V-JEPA pre-training. The results of different decoder heads are summarized in Figure~\ref{fig:vjepa-decoder-results}.
+As there are several experiments conducted on V-JEPA, we begin this section with the naming of each experiment. Each experiment is denoted by its architecture and its decoder head. The dataset V-JEPA was pre-trained on is indicated in the parenthesis. The control experiment, \textbf{ViT + Attentive*}, is the ViT model followed by an attentive decoder head, with intensive data augmentation and positive data sampling denoted by the asterisk, but without V-JEPA pre-training. The results of different decoder heads are summarized in Figure~\ref{fig:vjepa-decoder-results}.
 
 There is no significant difference between the various decoder heads. However, the representation learned by V-JEPA on VideoMix2M, namely \textbf{ViT + Attentive* (V-JEPA VideoMix2M)}, significantly improves the performance of the ViT model on calcium segmentation (\textbf{ViT + Attentive*}). This highlights the usefulness of V-JEPA pre-training.
 
@@ -424,20 +426,20 @@ There is no significant difference between the various decoder heads. However, t
     \label{fig:vjepa-decoder-results}
 \end{figure}
 
-In addition to V-JEPA pre-trained on VideoMix2M, we also evaluated V-JEPA pre-trained on our unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on the unannotated OCT images did not improve the performance of the ViT model on calcium segmentation. This may be due to the size of the dataset. The unannotated OCT dataset consists of only 500 volumes, whereas VideoMix2M contains 2M videos. This demonstrates the importance of dataset scale for self-supervised learning on transformer-based models.
+Besides V-JEPA pre-trained on VideoMix2M, we also evaluated V-JEPA pre-trained on our unannotated OCT images, \textbf{ViT + Attentive* (V-JEPA Unannotated OCT)}. Pre-training on the unannotated OCT images did not improve the performance of the ViT model. This may be due to the size of the dataset. The unannotated OCT dataset consists of only 500 volumes, whereas VideoMix2M contains 2M videos. This demonstrates the importance of dataset scale for self-supervised learning on transformer-based models.
 
 \section{CLIP}
-We find that CLIP pre-training on co-registered OCT images significantly improves the performance of the 3D nnUNet model. In addition, CLIP is statistically comparable to the 3D nnUNet model pre-trained on the LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on the LaW OCT dataset, while the cost for co-registration is lower than the cost for annotating lumen and wall. The performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}.
+CLIP pre-training on co-registered OCT images significantly improves the performance of the 3D nnUNet model. In addition, CLIP is statistically comparable to the 3D nnUNet model pre-trained on the LaW OCT dataset. This shows that CLIP is as effective as supervised pre-training on the LaW OCT dataset, while the cost for co-registration is lower than the cost for annotating the lumen and wall. The performance of CLIP pre-training on co-registered multi-modal OCT images is summarized in Figure~\ref{fig:clip-results}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.65\linewidth]{figures/result_nnUNet_and_CLIP_results.png}
-    \caption{Dice score of CLIP on Calcium OCT dataset compared to nnUNet. The algorithms used for pre-training are indicated in the parenthesis. The LaW OCT is the supervised pre-training on the Lumen and Wall OCT dataset. CLIP is the pre-training on co-registered multi-modal OCT images.
+    \caption{Dice score of CLIP on Calcium OCT dataset compared to the scores of nnUNet. The algorithm and dataset used for pre-training are indicated in the parenthesis. The LaW OCT is the supervised pre-training on the Lumen and Wall OCT dataset. CLIP is the pre-training on co-registered Pre-IVL and Post-IVL images.
     }
     \label{fig:clip-results}
 \end{figure}
 
-The success of CLIP pre-training may result from the fact that aligning Pre-IVL and Post-IVL requires the model to learn the features of the lumen and wall, which has been proven to be useful for calcium segmentation in nnUNet (LaW OCT). To prove this, we visualize the PCA of the features learned by CLIP compared to the features output from the initial weight of the model. 
+The success of CLIP pre-training may result from the fact that aligning Pre-IVL and Post-IVL requires the model to learn the features of the lumen and wall, which has been proven to be useful for calcium segmentation in 3D nnUNet. To prove this, we visualize the PCA of the features learned by CLIP compared to the features output from the initial weight of the model. 
 
 \begin{figure}[h]
     \centering
@@ -454,8 +456,7 @@ The success of CLIP pre-training may result from the fact that aligning Pre-IVL 
         \label{fig:pca-clip}
         
     \end{subfigure}
-    \caption{PCA of the output of the features from the initial weight of the model and the features learned by CLIP. CLIP pre-training gives more distinguishable features on the walls than those from the initial weight of the model. 
-    % This can be the reason why CLIP pre-training improves the performance of the model.
+    \caption{PCA of the output of the features from the initial weight of the model and the features learned by CLIP. CLIP pre-training provides more distinguishable features on the walls than those from the initial weight of the model. 
     }
 \end{figure}
 
@@ -472,9 +473,18 @@ Pre-training Genesis on unannotated OCT images results in a Dice score of $0.744
     \label{fig:genesis-results}    
 \end{figure}
 
+Since the lumen and wall have been identified as key features for improving calcium segmentation, restoring these structures using the Genesis method enables the model to learn these features. Visualizing the PCA of the features produced by the nnUNet pre-trained with Genesis reveals a similar pattern to that of CLIP, where the features around the arterial wall are discernible (see Figure~\ref{fig:pca-genesis}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/discussion_genesis_feature_map_batch0_feature1.png}
+    \caption{PCA of the output of the features from the model pre-trained with Genesis}
+    \label{fig:pca-genesis}
+\end{figure}
+
 
 \section{Final Results}
-The models are grouped into three categories: SSL for self-supervised learning models, Transformer for transformer-based models, and nnUNet for 2D and 3D CNN-based nnUNet models. V-JEPA on unannotated OCT is categorized under SSL, whereas V-JEPA on VideoMix2M is under Transformer, as it was only fine-tuned to the Calcium OCT dataset. Each result is statistically compared to the 2D nnUNet model, which has the highest average Dice score in our study. The results of the best models in each category are summarized in Figure~\ref{fig:results}.
+The models are grouped into three categories: SSL for self-supervised learning models on our unannotated OCT, Transformer for supervised learning transformer-based models, and nnUNet for supervised learning nnUNet models. V-JEPA on unannotated OCT is categorized under SSL, whereas V-JEPA on VideoMix2M is under Transformer. Each result is compared statistically to the 2D nnUNet model, which has the highest average Dice score in our study. The results of the best models in each category are summarized in Figure~\ref{fig:results}.
 
 \begin{figure}[hbt]
     \centering
@@ -483,15 +493,16 @@ The models are grouped into three categories: SSL for self-supervised learning m
     \label{fig:results}
 \end{figure}
 
-In the SSL category, V-JEPA pre-trained on unannotated OCT images performs significantly worse than 2D nnUNet. As discussed in the previous section, the scale of the dataset may play an important role in transformer-based self-supervised learning. Genesis pre-training on unannotated OCT images also performs significantly worse than the 2D nnUNet. However, it performs comparably to the best 3D nnUNet pre-trained on the LaW OCT dataset. Although it is not comparable to the best-performing model, it is as effective as supervised pre-training while not requiring additional annotations. CLIP pre-training on co-registered multi-modal OCT images performs comparably to the 2D nnUNet model. Additionally, it performs comparably to the 3D nnUNet model pre-trained on the LaW OCT dataset. This demonstrates that CLIP can be as effective as supervised pre-training while being less costly in terms of annotation.
+In the SSL category, V-JEPA pre-trained on unannotated OCT images performs significantly worse than 2D nnUNet. As discussed in the previous section, the scale of the dataset may play an important role in transformer-based self-supervised learning. Genesis pre-training on unannotated OCT images also performs comparably to the 2D nnUNet. Additionally, it is as effective as supervised pre-training while not requiring additional annotations. CLIP pre-training on co-registered multi-modal OCT images also performs comparably to the 2D nnUNet model. Furthermore, it performs comparably to the 3D nnUNet model pre-trained on the LaW OCT dataset. This demonstrates that CLIP can be as effective as supervised pre-training while being less costly for annotation.
 
-Our experiments show that the Dice scores of transformer-based models are significantly lower than those of the 2D nnUNet. Transformers utilize a self-attention mechanism that enables the model to combine features from different parts of the image. In contrast, the kernels of CNNs are designed to learn local features. Since calcium plaques are typically located around artery walls, CNNs are more suitable for detecting them. Additionally, the scale of the dataset used in self-supervised learning may play an important role. The nnUNet, on the other hand, is designed for small to medium-sized medical datasets. Scaling up the size of the dataset and model parameters may not be advantageous for CNNs after a certain point. In contrast, transformers are likely to benefit from scaling~\cite{Zhai2021}. This study does not aim to prove that nnUNet is better than transformers in general. It only demonstrates that nnUNet is more suitable for calcium segmentation on OCT images with the current scale of the dataset and model parameters.
+Our experiments show that the Dice scores of transformer-based models are significantly lower than those of the 2D nnUNet. We hypothesize that this difference arises because nnUNet is specifically designed for small datasets, whereas transformer-based models typically assume access to moderately large datasets. As a result, nnUNet appears to be more suitable for our dataset.
+However, increasing the size of the dataset and model parameters may not provide further benefits for nnUNet beyond a certain point. In contrast, transformers are likely to benefit from scaling~\cite{Zhai2021}. This study does not aim to prove that nnUNet is superior to transformers in general. Instead, it demonstrates that nnUNet is more appropriate for calcium segmentation on OCT images given the current scale of our dataset and model parameters.
 
-The best model in our study is 2D nnUNet, which achieved an average Dice score of $0.753\pm0.006$. However, continuity is better achieved and retained during the post-processing with 3D segmentation than the 2D counterpart. 2D nnUNet, on the other hand, does not benefit from pre-training on other datasets, because converting the dataset into 2D images provides sufficient samples for the model to learn the features of the calcium plaques. In contrast, the best performance in the 3D nnUNet is achieved by pre-training on the LaW OCT dataset. The patch size of 3D nnUNet is crucial for the model's performance. Reducing the patch size in the depth dimension significantly enhances the performance, whereas increasing context in the width and height dimension does not. This reflects the nature of annotating calcium plaques in OCT images. Calcium plaques are identified by changes in intensity around the artery walls. Therefore, the x-y plane context does not provide additional information to the model. Similarly, calcium often occurs between adjacent slices, so there is no need for the model to have more context in the depth dimension.
+The best model in our study is 2D nnUNet, which achieves an average Dice score of $0.753\pm0.006$. However, continuity is better achieved and retained during the post-processing by 3D nnUNet than its 2D counterpart. 2D nnUNet, on the other hand, does not benefit from pre-training on other datasets, because converting the dataset into 2D images may provide sufficient samples for the model to learn the features of the calcium plaques. On the contrary, the best performance in the 3D nnUNet is achieved by pre-training on the LaW OCT dataset. Additionally, the patch size of 3D nnUNet is crucial for the model's performance. Reducing the patch size in the depth dimension significantly enhances the performance, whereas increasing context in the width and height dimension does not. This reflects the nature of annotating calcium plaques in OCT images. Calcium plaques are identified by changes in intensity around the artery walls. Therefore, an increment in the height and width does not provide additional information to the model. Similarly, calcium often occurs between adjacent slices, so the model doesn't need to have more context in the depth dimension.
 
 \section{Discussion}
 \subsection{Scale Analysis}
-We conducted a study on the scale of the dataset used to train the model and its effect on model performance. We randomly subsampled 33\%, 50\%, 66\%, and 83\% of the Calcium OCT dataset while excluding the test set. Each sampled dataset was split into 75\% and 25\% for training and validation respectively. We then trained the model with the training set, while tracking the best model with the validation set. The final Dice score and cross entropy loss are calculated using the test set which remains the same across all scales and experiments.
+The impact of dataset size on model performance was investigated by systematically subsampling the Calcium OCT dataset and evaluating the resulting models. We randomly subsampled 33\%, 50\%, 66\%, and 83\% of the Calcium OCT dataset while excluding the test set. Each sampled dataset was split into 75\% and 25\% for training and validation respectively. We then trained the model with the training set, while tracking the best model with the validation set. The final Dice score and cross entropy loss are calculated using the test set which remains the same across all scales and experiments.
 
 It is worth pointing out that, in the Calcium OCT dataset, the outcome of the model is highly sensitive to the selection of training data. This is unsurprising as the total size of the dataset is particularly small. This reflects on the standard deviation and the scores volatility, as the scale increases.
 
