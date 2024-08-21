@@ -303,14 +303,14 @@ Further, inspired by SegFormer~\cite{Xie2021SegFormer}, we developed multi-featu
 \end{figure}
 
 \subsubsection{Genesis}
-Genesis has made their code available~\cite{Zhou2021}. Their implementation requires an initial pre-processing step on unannotated OCT images. It samples small cubes of size $64\times 64\times 64\times 32$ from the unannotated volumes. These cubes are then corrupted on the fly during the Genesis pre-training process. The author recommends $96$ cubes per volume, as increasing the number of cubes per volume might not improve the performance while increasing computation cost. We followed this recommendation and applied an additional sampling strategy. The strategy randomly samples $96$ cubes from each volume. This was done to ensure that the sampled cubes contain enough information since OCT images are filled with background unlike CT images used in the original paper. The sampling strategy involves selecting the cubes with average intensity above a certain threshold. The resulting cubes from the threshold strategy can be seen in Figure~\ref{fig:genesis-cubes-with-threshold}. Without this strategy, the sampled cubes are mainly background noise, which is shown in Figure~\ref{fig:genesis-cubes-without-threshold}. We then trained the model on these cubes until convergence.
+Genesis provides its official code~\cite{Zhou2021}. Their implementation involves an initial pre-processing step on the Unannotated OCT images, sampling small cubes of size $64\times 64\times 64\times 32$ from the unannotated volumes. These cubes are then corrupted on the fly during the Genesis pre-training process. The author recommends $96$ cubes per volume, as increasing this number might not improve the performance while adding computation cost. We followed this recommendation and applied an additional sampling strategy. Our strategy randomly sampled $96$ cubes from each volume to ensure that the cubes contain enough information, as OCT images are filled with background unlike CT images used in the original paper. The sampling strategy involves selecting only the cubes with average intensities above a certain threshold. The resulting cubes from our thresholding strategy are illustrated in Figure~\ref{fig:genesis-cubes-with-threshold}. They contain information such as the lumen and wall of the artery. Without our thresholding strategy, the sampled cubes are filled with background noise, shown in Figure~\ref{fig:genesis-cubes-without-threshold}. We then trained the model on these cubes until convergence.
 
 \begin{figure}[t]
     \centering
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{figures/fig_implementation_genesis_extracted_cube.png}
-        \caption{Samples of cubes from unannotated OCT images with threshold sampling strategy.}
+        \caption{Samples of cubes from unannotated OCT images with thresholding sampling strategy.}
         \label{fig:genesis-cubes-with-threshold}
 
     \end{subfigure}%
@@ -318,18 +318,18 @@ Genesis has made their code available~\cite{Zhou2021}. Their implementation requ
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{figures/fig_implementation_genesis_extracted_cube_no_threshold.png}
-        \caption{Samples of cubes from unannotated OCT images without threshold sampling strategy.}
+        \caption{Samples of cubes from unannotated OCT images without thresholding sampling strategy.}
         \label{fig:genesis-cubes-without-threshold}
     \end{subfigure}
-    \caption{Samples of cubes from unannotated OCT images. Each row is a sampled cube with slices unrolled along the depth dimension. With threshold sampling in \ref{fig:genesis-cubes-with-threshold}, the cubes are the wall area of the OCT images. Without threshold sampling in \ref{fig:genesis-cubes-without-threshold}, the cubes are mainly background noise.}
+    \caption{Samples of cubes from unannotated OCT images. Each row is a sampled cube with slices unrolled along the depth dimension.}
 \end{figure}
 
-For fine-tuning, we loaded the pre-trained weights of the model's encoder and decoder into the 3D nnUNet, while leaving the segmentation head to be randomly initialized. Subsequently, we fine-tuned the pre-trained model on the Calcium OCT dataset. Following the findings of the 3D nnUNet, we fine-tuned the model with the best patch size found in Section~\ref{sec:design:nnunet}, which is $160\times 128\times 32$. To achieve this, we used the nnUNet's training script with the same hyperparameters as the supervised pre-training and provided the pre-trained model as the initial weights.
+For fine-tuning, we loaded the pre-trained weights of the model's encoder and decoder into the 3D nnUNet, leaving the segmentation head to be randomly initialized. Subsequently, we fine-tuned the pre-trained model on the Calcium OCT dataset. Following the findings of the 3D nnUNet, we fine-tuned the model with the best patch size found in Section~\ref{sec:design:nnunet}, which is $160\times 128\times 32$ of height by width by depth. To achieve this, we used the nnUNet's training script with the same configurations as the supervised pre-training and provided the pre-trained model as the initial weights.
 
 \subsubsection{Multi-modal Self-Supervised Learning - CLIP}\label{sec:implementation:clip}
 Originally, the algorithm is designed for language-image pairs. However, we adapted the algorithm to multi-modalities of OCT images. To achieve this, we swap the text tokenizer of the original CLIP for an image encoder. 
 
-From our experiments, we found that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. We did a sanity check on different configurations by passing the same images to them and seeing whether they could learn to match a much simpler problem. It should be able to encode the same image to the same vector. We sanity-checked 3 configurations, separate encoders and projectors, separate encoders and shared projectors, and shared encoders and projectors. We found that separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image.
+From our experiments, we found that using separate encoders and projectors for each modality is not as effective as using a shared encoder and projector. We did a sanity check on different configurations by passing the same images to them and seeing whether they could learn to match a much simpler problem. It should be able to encode the same image to the same vector. We sanity-checked 3 configurations: separate encoders and projectors, encoders and shared projectors, and encoders and projectors. We found that separate encoders and shared projectors, and shared encoders and projectors can learn to match the same image.
 
 Consequently, we applied these two configurations to the main task of matching co-registered images. This time, only the shared encoders and projectors could converge. This is reasonable, as the image encoder and its projector are forced to learn a representation that can be used for both modalities. This approach is illustrated in Figure~\ref{fig:clip-oct}. We refer the reader to Section~\ref{sec:results:discussion:clip} for details of the experiment.
 
