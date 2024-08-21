@@ -157,9 +157,8 @@ In recent years, generative tasks have now gained more attention in medical imag
 % This section is usually 5-10 pages.
 
 \section{Datasets}\label{sec:design:datasets}
-The main goal of this project is to study the effectiveness of self-supervised and supervised pre-training methods for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 volumes with calcium plaque annotations. Lumen and Wall OCT LaW OCT is a dataset of 20 volumes annotated with lumen and wall (Dataset \ref{enum:lumen-and-wall-dataset}). These two datasets are mutually exclusive, meaning that the OCT images are not duplicated between them. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment.
-% Even though these volumes are unannotated, a tabular meta-data is available for each volume. This meta-data describes the morphological properties of the calcium plaques, lumen, and wall. 
-It can be summarized as follows:
+The main goal of this project is to study the effectiveness of self-supervised and supervised pre-training methods for calcium segmentation on coronary OCT images. Therefore, we categorized the datasets into two groups, annotated and unannotated datasets. Each category has its characteristics and relevance to the problem. Calcium OCT (Dataset \ref{enum:calcium-dataset}) contains 8 volumes with calcium plaque annotations. Lumen and Wall OCT LaW OCT is a dataset of 20 volumes annotated with lumen and wall (Dataset \ref{enum:lumen-and-wall-dataset}). These two datasets are mutually exclusive, meaning that the OCT images are not duplicated between them. Furthermore, 500 3D volumes are unannotated. These volumes are divided into 3 groups, 167 volumes before IVL, 169 volumes after IVL, and 164 volumes after stent deployment. These unannotated volumes include a co-registered pair of Pre-IVL and Post-IVL images, ensuring alignment along the depth dimension to match their positions in the artery (see Figure~\ref{fig:co-registered-oct}).
+
 % TODO: describe Pre/Post-IVL here
 \begin{enumerate}
     \item Annotated datasets:
@@ -194,7 +193,7 @@ Each dataset has its purpose in this study. Calcium OCT is used for evaluating t
         \label{fig:lumen-and-wall-oct}
     \end{subfigure}
     \caption{For each image, the top row shows the original image at the middle slice across three axes, while the bottom row displays the corresponding segmentation masks.}
-    \label{fig:enter-label}
+    \label{fig:annotated-oct}
 \end{figure}
 
 Each dataset has unique characteristics and is divided into training, validation, and testing sets, except for the unannotated datasets, which are used for self-supervised pre-training.
@@ -202,13 +201,24 @@ Calcium OCT has one class, calcium. The size of each image is $500\times 500$ wh
 
 LaW OCT has 2 classes, lumen, and wall, and is divided into 16 training volumes and 4 testing volumes. The size of each image is $500\times 500$ while the depth varies from $270$ to $540$. An example of the annotated image is shown in Figure~\ref{fig:lumen-and-wall-oct}.
 
-The unannotated datasets are of size $500\times 500$, and varying depth. They are not split into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may divided into training and validation sets to track its convergence. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}. 
+The unannotated datasets are of size $500\times 500$, and varying depth. They are not split into training and testing sets since they are only used for self-supervised pre-training. However, each self-supervised learning algorithm may divided into training and validation sets to track its convergence. Samples of each modality are shown in Figure~\ref{fig:unannotated-oct}.
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/fig_datasets_unlabeled_oct_sample.pdf}
-    \caption{Samples of unannotated OCT images: the left column shows Pre-IVL, the middle column Post-IVL, and the right column Post-Stent OCT.}
-    \label{fig:unannotated-oct}
+\begin{figure}[hbt]
+    % \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.65\linewidth]{figures/fig_datasets_coregistered_prepostivl.png}
+        \caption{Samples of co-registered images between Pre-IVL and Post-IVL}
+        \label{fig:co-registered-oct}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{figures/fig_datasets_unlabeled_oct_sample.pdf}
+        \caption{Samples of unannotated OCT images: the left column shows Pre-IVL, the middle column Post-IVL, and the right column Post-Stent OCT.}
+        \label{fig:unannotated-oct}
+    \end{subfigure}
+    \caption{For each image, the top row shows the original image at the middle slice across three axes, while the bottom row displays the corresponding segmentation masks.}
 \end{figure}
 
 \newpage
